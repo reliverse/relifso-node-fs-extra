@@ -1,68 +1,32 @@
 {
   "name": "@reliverse/fs",
   "author": "reliverse",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "@reliverse/fs is a utility library that wraps the Node.js native fs module and fs-extra package, providing enhanced file system functionalities. This package is part of the broader @reliverse/addons ecosystem.",
+  "description": "@reliverse/fs is a utility library that wraps the Node.js native fs module and fs-extra package, providing enhanced file system functionalities.",
   "scripts": {
-    "appts": "redrun knip lint format typecheck test build",
-    "build": "tsup",
-    "ci": "pnpm lint:eslint && pnpm typecheck && pnpm test && pnpm build",
-    "dev:eslint": "pnpm eslint --inspect-config",
-    "dev": "vitest",
-    "format:biome": "biome format --write .",
-    "format": "redrun format:biome",
-    "knip": "knip",
-    "latest": "pnpm update --latest",
-    "lint:biome": "biome lint --write .",
-    "lint:eslint": "eslint --cache --fix .",
-    "lint": "redrun lint:eslint lint:biome",
-    "pub": "pnpm publish --access public",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "pub": "relidler",
+    "agg": "relidler tools --tool agg --input src/utils --out src/main.ts --recursive --named --strip src"
   },
   "files": ["dist"],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
   "keywords": ["reliverse", "addons", "fs-extra", "fs"],
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^11.2.0",
-    "pathe": "^1.1.2"
+    "fs-extra": "^11.3.0",
+    "pathe": "^2.0.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.8.3",
-    "@changesets/cli": "^2.27.7",
-    "@eslint/js": "^9.9.0",
-    "@total-typescript/ts-reset": "^0.5.1",
-    "@types/eslint__js": "^8.42.3",
+    "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.28.1",
+    "@reliverse/relidler-cfg": "^1.1.3",
+    "@total-typescript/ts-reset": "^0.6.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.4.0",
-    "eslint": "^9.9.0",
-    "knip": "^5.27.2",
-    "redrun": "^11.0.5",
-    "terser": "^5.31.6",
-    "tsup": "^8.2.4",
-    "typescript": "5.6.0-beta",
-    "typescript-eslint": "^8.1.0",
-    "vitest": "^2.0.5"
-  },
-  "pnpm": {
-    "allowedDeprecatedVersions": {
-      "inflight": "*",
-      "glob": "*"
-    },
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "eslint": "9"
-      }
-    }
-  },
-  "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247"
+    "@types/node": "^22.13.11",
+    "knip": "^5.46.0",
+    "redrun": "^12.0.0",
+    "terser": "^5.39.0",
+    "tsup": "^8.4.0",
+    "typescript": "5.8.2",
+    "vitest": "^3.0.9"
+  }
 }

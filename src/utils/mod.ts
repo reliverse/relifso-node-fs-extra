@@ -2,6 +2,28 @@ import fs from "fs-extra";
 import { dirname, join } from "pathe";
 import { fileURLToPath } from "node:url";
 
+/**
+ * Ensures that the directory exists. If the directory structure does not exist, it is created.
+ */
+export async function ensuredir(dirPath: string) {
+  return await fs.ensureDir(dirPath);
+}
+
+/**
+ * Removes a file or directory. The directory can have contents. If the path does not exist, silently does nothing.
+ */
+export async function remove(path: string) {
+  return await fs.remove(path);
+}
+
+export function getExtensionFromPath(filePath: string) {
+  return filePath.split(".").pop();
+}
+
+export function getFilenameFromPath(filePath: string) {
+  return filePath.split("/").pop();
+}
+
 export function getCurrentDirname(importMetaUrl: string) {
   return dirname(fileURLToPath(importMetaUrl));
 }
@@ -52,20 +74,4 @@ export function getFoldersInDirectory(directory: string): string[] {
     })
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
-}
-
-export async function removeFolder(folderPath: string) {
-  const files = fs.readdirSync(folderPath);
-
-  for (const file of files) {
-    const filePath = join(folderPath, file);
-
-    if (fs.lstatSync(filePath).isDirectory()) {
-      await removeFolder(filePath);
-    } else {
-      fs.unlinkSync(filePath);
-    }
-  }
-
-  fs.rmdirSync(folderPath);
 }
