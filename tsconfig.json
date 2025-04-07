@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
+    "paths": { "~/*": ["./src/*"] },
+    "baseUrl": ".",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "target": "es2022",
+    "target": "ESNext",
+    "lib": ["ESNext"],
     "allowJs": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
@@ -11,14 +14,25 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    "declaration": true,
-    "module": "preserve",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
     "noEmit": true,
-    "lib": ["es2022", "dom", "dom.iterable"],
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./src/*"]
-    }
+
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strictNullChecks": false
   },
-  "include": ["src", "**/*.ts", "eslint.config.js"]
+
+  "include": [
+    "**/*.ts",
+    "reset.d.ts",
+    "eslint.config.js",
+    "tsconfig.json",
+    ".reliverse/reliverse.config.ts"
+  ],
+  "exclude": ["node_modules", "dist-jsr", "dist-libs"]
 }

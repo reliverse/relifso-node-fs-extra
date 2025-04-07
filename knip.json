@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/**/*.ts", "eslint.config.js"],
-  "ignore": [],
-  "ignoreBinaries": [],
-  "ignoreDependencies": ["terser"]
+  "project": ["**/*.{ts,js}"],
+  "entry": ["**/*.{config,cfg}.{ts,js}", "src/main.ts", "src/**/*-main.ts"],
+  "ignore": ["node_modules", "dist-jsr", "dist-npm", "dist-libs"],
+  "ignoreBinaries": ["relidler"]
 }

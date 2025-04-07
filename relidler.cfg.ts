@@ -7,20 +7,20 @@ import { defineConfig } from "@reliverse/relidler-cfg";
  */
 export default defineConfig({
   // Bump configuration
-  bumpDisable: false,
+  bumpDisable: true,
   bumpFilter: ["package.json", "reliverse.ts"],
-  bumpMode: "autoMajor",
+  bumpMode: "autoPatch",
 
   // Common configuration
-  commonPubPause: false,
-  commonPubRegistry: "npm",
+  commonPubPause: true,
+  commonPubRegistry: "npm-jsr",
   commonVerbose: false,
 
   // Core configuration
-  coreDeclarations: true,
+  coreDeclarations: false,
   coreEntryFile: "main.ts",
   coreEntrySrcDir: "src",
-  coreIsCLI: false,
+  coreIsCLI: true,
 
   // JSR-only config
   distJsrAllowDirty: true,
@@ -42,18 +42,19 @@ export default defineConfig({
   // Publish specific dirs as separate packages
   // This feature is experimental at the moment
   // Please commit your changes before using it
-  libsActMode: "main-project-only",
+  libsActMode: "libs-only", // TODO: change to "main-and-libs"
   libsDirDist: "dist-libs",
   libsDirSrc: "src/libs",
   libsList: {
-    // "@acme/cli-libName": {
-    //   libDeclarations: true,
-    //   libDescription: "@acme/cli defineConfig",
-    //   libDirName: "libName",
-    //   libMainFile: "libName/libName-main.ts",
-    //   libPkgKeepDeps: true,
-    //   libTranspileMinify: true,
-    // },
+    "@reliverse/relifso": {
+      libDeclarations: true,
+      libDescription:
+        "@reliverse/relifso is a modern filesystem toolkit for builders. Drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with ES modules, and packed with Bun-specific features and DX-focused utilities.",
+      libDirName: "core",
+      libMainFile: "core/core-main.ts",
+      libPkgKeepDeps: true,
+      libTranspileMinify: true,
+    },
   },
 
   // Logger setup
@@ -68,8 +69,7 @@ export default defineConfig({
     "eslint",
     "knip",
     "prettier",
-    "typescript",
-    "@reliverse/config",
+    "@reliverse/cli-cfg",
   ],
 
   // Build setup

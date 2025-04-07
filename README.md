@@ -1,81 +1,141 @@
-# @reliverse/fs: File System Utilities
+# @reliverse/relifso
 
-[@reliverse/fs](https://npmjs.com/package/@reliverse/fs) is a utility library that wraps the [Node.js native `fs`](https://nodejs.org/api/fs.html) module and [fs-extra](https://npmjs.com/package/fs-extra) package, providing enhanced file system functionalities. This package is part of the broader `@reliverse/addons` ecosystem.
+[💖 GitHub Sponsors](https://github.com/sponsors/blefnk) • [📦 NPM](https://npmjs.com/package/@reliverse/relifso) • [✨ Repo](https://github.com/reliverse/relifso) • [💬 Discord](https://discord.gg/Pb8uKbwpsJ)
 
-**Note:** This project currently focuses on adding custom utilities (which use `fs-extra` and `pathe`), rather than re-exporting or modifying existing functionality from `fs` or `fs-extra`.
+> **@reliverse/relifso** is a modern filesystem toolkit for builders. Drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with ES modules, and packed with Bun-specific features and DX-focused utilities.
 
-For more detailed usage instructions, API documentation, and examples, please visit the [Reliverse Docs](https://reliverse.org) website. If you find that the page for this library is missing, please notify us or consider contributing to add it.
+## Why Relifso?
 
-## Installation
+- 🪄 Everything you love from `fs-extra` — now simpler, cleaner, and more beginner-friendly
+- ⚙️ Drop-in replacement for `node:fs` — with native `Promise`, `async/await`, and sync variants
+- 📦 First-class ESM and full TypeScript support — no config hacks required
+- 🧼 Zero bloat — minimal deps, modern code, no monkey-patching
+- 🧯 Gracefully handles errors like `EMFILE` and other edge cases
+- 📚 Consistent error-first behavior — even for legacy APIs like `fs.exists()`
+- 🎯 Supports all Node.js v16+ features — optimized for Node.js v22+
+- 🧪 Ready for upcoming Node.js v22+ experimental features
+- ✌️ Bun v1.2+ ready — ships with Bun-aware enhancements out of the box
+- 🔥 Bun-specific features are exposed via `fs.*` when running on Bun
 
-To install this package, run:
+## Install
 
 ```bash
-pnpm add @reliverse/fs@latest
+bun add @reliverse/relifso
+# bun • pnpm • yarn • npm
 ```
 
-or with Bun:
+## Usage
 
-```bash
-bun add @reliverse/fs@latest
-```
-
-## How to Use This Library
-
-To use `@reliverse/fs`, ensure that your project is set up as an ES module by including `"type": "module"` in your `package.json` file. Since this package is structured as an ES module, you'll need to use `import` statements instead of `require`.
-
-The library primarily relies on the async versions of `fs` functions, so you need to add the `await` keyword before the utils from our library.
-
-Here's an example of how to import and use a function from this package:
+Relifso works just like `fs-extra` — every method is promise-first, ergonomic, and future-ready.
 
 ```ts
-import { fileExists } from "@reliverse/fs";
+import { copy, pathExists, remove } from "@reliverse/relifso";
 
-const someFile = "path/to/file.ts";
+await copy("src/index.ts", "dist/index.ts");
 
-export async function checkFile() {
-  await fileExists(someFile);
+if (await pathExists("dist/index.ts")) {
+  await remove("dist/index.ts");
 }
 ```
 
-Please refer to the source files located in the [`src` folder](https://github.com/reliverse/fs/blob/main/src) to learn about the currently implemented functions.
+- ✨ Everything’s bundled — modern, async, and type-safe.
+- 🧼 No more boilerplate like `promisify(fs.removeSync)` or using `mkdirp`, `ncp`, or `rimraf`.
+- 🌱 No more weird `try/catch` for common errors like “file not found.”  
+- ✌️ Just clean, predictable APIs built for 2025 and beyond.
 
-This package adopts the ES module format, with files compiled to `dist/.js` (formerly known as `dist/.mjs`). This approach aligns with the Node.js team's recent recommendations, encouraging the JavaScript/TypeScript community to transition to the ES module standard. If your project still requires CommonJS (CJS) support, you may fork this repository and modify the build process to generate `dist/.cjs` files. For guidance or community support, join the [Reliverse Discord community](https://discord.gg/C4Z46fHKQ8).
+## What’s Inside?
 
-## Documentation and Support
+### File & Directory Ops
 
-If you encounter any issues, need help, or want to contribute, you can:
+- `copy()` / `copySync()`
+- `move()` / `moveSync()`
+- `remove()` / `removeSync()`
+- `mkdirp()` / `mkdirpSync()` / `ensureDir()` / `ensureLink()` / `ensureSymlink()`
+- `emptyDir()` / `emptyDirSync()`
+- `createFile()` / `createFileSync()`
 
-- Join the [Reliverse Discord community](https://discord.gg/C4Z46fHKQ8) to ask questions and engage with other users and developers.
-- For usage instructions, API documentation, and examples, please visit the [Reliverse Docs](https://reliverse.org) website.
-- Report bugs or suggest features by opening an issue on our [GitHub repository](https://github.com/reliverse/fs/issues).
+### I/O Helpers
 
-## Sponsors
+- `readJson()` / `readJsonSync()`
+- `writeJson()` / `writeJsonSync()`
+- `outputFile()` / `outputFileSync()`
+- `outputJson()` / `outputJsonSync()`
+- `pathExists()` / `pathExistsSync()`
+- `readFile()` / `readFileSync()`
+- `writeFile()` / `writeFileSync()`
 
-*Love using this project? If you find it useful, I’d greatly appreciate a cup of coffee! By supporting this project, you'll gain access to Reliverse Pro, exclusive access to @reliverse/addons-pro, private repositories, pre-release downloads, and even the ability to influence projects planning. Click on the donation platforms below to learn more. Thank you all for your support!*
+> All async methods follow the `Promise` pattern. All sync methods are safe and throw errors when needed.
 
-**[We're Growing Fast! A Huge Thanks to All Our Supporters!](https://github.com/blefnk/relivator/stargazers)**
+## Example
 
-Developing something as ambitious as [@reliverse/addons](https://github.com/reliverse/addons) takes a huge amount of time, especially since the project is primarily developed by one person. The development could be significantly accelerated by bringing on additional developers. Therefore, @blefnk (Nazar Kornienko), the author of this project, would be immensely grateful to anyone who can contribute financially in any amount. A big thank you in advance to everyone who supports this effort!
+```ts
+import {
+  ensureDir,
+  outputJson,
+  readJson,
+  remove,
+} from "@reliverse/relifso";
 
-**[Visit the "Donate to Relivator" page to see our current donors and learn more.](https://relivator.reliverse.org/donate)**
+const path = "./.reliverse/config.json";
 
-### 💚 [GitHub Sponsors](https://github.com/sponsors/blefnk) 🩵 [PayPal](https://paypal.me/blefony) 🧡 [Patreon](https://patreon.com/blefnk) 💛 [Buy Me a Coffee](https://buymeacoffee.com/blefnk) 🩷 [Ko-fi](https://ko-fi.com/blefnk)
+await ensureDir(".reliverse");
+await outputJson(path, { hello: "world" });
 
-## Contributing
+const config = await readJson(path);
+console.log(config); // { hello: 'world' }
 
-We welcome contributions! If you’d like to contribute to the development of this package, please follow these steps:
+await remove(".reliverse");
+```
 
-1. **If you are a beginner:** Familiarize yourself with Git by following [The Detailed Git Guide](https://github.com/blefnk/relivator/blob/main/.github/GITGUIDE.md) created by @blefnk and @reliverse.
-2. Fork this repository.
-3. Create a new branch for your feature (e.g. `git checkout -b feature-branch`).
-4. Make your changes in the new branch.
-5. Commit your changes with a descriptive message (e.g. `git commit -m 'Add new feature'`).
-6. Push your changes to your branch (e.g. `git push origin feature-branch`).
-7. Open a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests) for our review.
+## Sync vs Async vs Legacy
 
-Please ensure that your code follows the existing code style and includes appropriate tests. Your code should successfully pass the `pnpm appts` command.
+You choose your flavor:
+
+```ts
+// Async/Await
+await copy("a.txt", "b.txt");
+
+// Callback (legacy-style)
+copy("a.txt", "b.txt", err => {
+  if (err) console.error(err);
+});
+
+// Sync
+copySync("a.txt", "b.txt");
+```
+
+All async methods return a `Promise` if no callback is passed.
+
+## Fully Typed, Fully Modern
+
+- Written in modern ESM
+- Zero dependencies (except `graceful-fs`)
+- Full TypeScript declarations
+- Compatible with Node.js 16+, best with 18+
+- Async methods are built from the sync versions — no wrappers, no bloat
+
+## Show Some Love
+
+If `@reliverse/relifso` reduced the number of lines in your codebase:
+
+- ⭐ [Star it on GitHub](https://github.com/reliverse/relifso)
+- 💖 [Sponsor @blefnk](https://github.com/sponsors/blefnk)
+- 🧙 Recommend it to your dev friends
+
+## Related Projects
+
+- [`fsxt`](https://github.com/uwx-node-modules/fsxt) — modern fork of `fs-extra`, partially influences internal design
+- [`fs-lite`](https://github.com/baooab/node-fs-lite) — no-deps, sync-first file system helpers
+- [`fs-extra`](https://github.com/jprichardson/node-fs-extra) — classic, reliable, but dated
+
+## Shoutouts
+
+**relifso** wouldn’t exist without these gems:
+
+[node:fs](https://nodejs.org/api/fs.html)+[node:path](https://nodejs.org/api/fs.html) > [node-fs-extra](https://github.com/jprichardson/node-fs-extra#readme) > [fsxt](https://github.com/uwx-node-modules/fsxt#readme)+[node-fs-lite](https://github.com/baooab/node-fs-lite#readme) » _relifso_
 
 ## License
 
-This project is developed by [Reliverse](https://github.com/orgs/reliverse/repositories) and [@blefnk (Nazar Kornienko)](https://github.com/blefnk) and is licensed under the MIT License. For more information, please refer to the [LICENSE](./LICENSE) file.
+Welcome to the Reliverse — we build tools that builders want.
+
+MIT © 2025 [blefnk Nazar Kornienko](https://github.com/blefnk)
