@@ -7,20 +7,20 @@ import { defineConfig } from "@reliverse/relidler-cfg";
  */
 export default defineConfig({
   // Bump configuration
-  bumpDisable: true,
+  bumpDisable: false,
   bumpFilter: ["package.json", "reliverse.ts"],
   bumpMode: "autoPatch",
 
   // Common configuration
-  commonPubPause: true,
+  commonPubPause: false,
   commonPubRegistry: "npm-jsr",
-  commonVerbose: false,
+  commonVerbose: true,
 
   // Core configuration
-  coreDeclarations: false,
+  coreDeclarations: true,
   coreEntryFile: "main.ts",
   coreEntrySrcDir: "src",
-  coreIsCLI: true,
+  coreIsCLI: false,
 
   // JSR-only config
   distJsrAllowDirty: true,
@@ -42,20 +42,10 @@ export default defineConfig({
   // Publish specific dirs as separate packages
   // This feature is experimental at the moment
   // Please commit your changes before using it
-  libsActMode: "libs-only", // TODO: change to "main-and-libs"
+  libsActMode: "main-project-only",
   libsDirDist: "dist-libs",
   libsDirSrc: "src/libs",
-  libsList: {
-    "@reliverse/relifso": {
-      libDeclarations: true,
-      libDescription:
-        "@reliverse/relifso is a modern filesystem toolkit for builders. Drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with ES modules, and packed with Bun-specific features and DX-focused utilities.",
-      libDirName: "core",
-      libMainFile: "core/core-main.ts",
-      libPkgKeepDeps: true,
-      libTranspileMinify: true,
-    },
-  },
+  libsList: {},
 
   // Logger setup
   logsFileName: "relinka.log",

@@ -1,7 +1,8 @@
-import * as fs from "../../index.js";
-import os from "os";
-import path from "node:path";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fs from "../../index.js";
 import * as stat from "../stat.js";
 
 describe("util/stat", () => {

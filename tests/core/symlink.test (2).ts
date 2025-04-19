@@ -1,8 +1,9 @@
 import fs from "graceful-fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 import { symlinkPathsSync } from "../symlink-paths.js";
 
 const { ensureSymlink, ensureSymlinkSync } = fse;
@@ -138,7 +139,7 @@ describe("fse-ensure-symlink", () => {
         const dstDirContents = fs.readdirSync(dstDir);
         assert.strictEqual(isSymlink, true);
         assert.strictEqual(srcContent, dstContent);
-        assert(dstDirContents.indexOf(dstBasename) >= 0);
+        assert(dstDirContents.includes(dstBasename));
         return done();
       };
       args.push(callback);
@@ -156,7 +157,7 @@ describe("fse-ensure-symlink", () => {
         const isSymlink = fs.lstatSync(dstpath).isSymbolicLink();
         const dstDirContents = fs.readdirSync(dstDir);
         assert.strictEqual(isSymlink, true);
-        assert(dstDirContents.indexOf(dstBasename) >= 0);
+        assert(dstDirContents.includes(dstBasename));
         assert.throws(() => fs.readFileSync(dstpath, "utf8"), Error);
         return done();
       };
@@ -195,7 +196,7 @@ describe("fse-ensure-symlink", () => {
         const dstDirContents = fs.readdirSync(dstDir);
         assert.strictEqual(isSymlink, true);
         assert.deepStrictEqual(srcContents, dstContents);
-        assert(dstDirContents.indexOf(dstBasename) >= 0);
+        assert(dstDirContents.includes(dstBasename));
         return done();
       };
       args.push(callback);
@@ -213,7 +214,7 @@ describe("fse-ensure-symlink", () => {
         const isSymlink = fs.lstatSync(dstpath).isSymbolicLink();
         const dstDirContents = fs.readdirSync(dstDir);
         assert.strictEqual(isSymlink, true);
-        assert(dstDirContents.indexOf(dstBasename) >= 0);
+        assert(dstDirContents.includes(dstBasename));
         assert.throws(() => fs.readdirSync(dstpath), Error);
         return done();
       };
@@ -251,7 +252,7 @@ describe("fse-ensure-symlink", () => {
       const dstDirContents = fs.readdirSync(dstDir);
       assert.strictEqual(isSymlink, true);
       assert.strictEqual(srcContent, dstContent);
-      assert(dstDirContents.indexOf(dstBasename) >= 0);
+      assert(dstDirContents.includes(dstBasename));
     });
   }
   function fileBrokenSync(args, fn) {
@@ -264,7 +265,7 @@ describe("fse-ensure-symlink", () => {
       const isSymlink = fs.lstatSync(dstpath).isSymbolicLink();
       const dstDirContents = fs.readdirSync(dstDir);
       assert.strictEqual(isSymlink, true);
-      assert(dstDirContents.indexOf(dstBasename) >= 0);
+      assert(dstDirContents.includes(dstBasename));
       assert.throws(() => fs.readFileSync(dstpath, "utf8"), Error);
     });
   }
@@ -298,7 +299,7 @@ describe("fse-ensure-symlink", () => {
       const dstDirContents = fs.readdirSync(dstDir);
       assert.strictEqual(isSymlink, true);
       assert.deepStrictEqual(srcContents, dstContents);
-      assert(dstDirContents.indexOf(dstBasename) >= 0);
+      assert(dstDirContents.includes(dstBasename));
     });
   }
   function dirBrokenSync(args, fn) {
@@ -311,7 +312,7 @@ describe("fse-ensure-symlink", () => {
       const isSymlink = fs.lstatSync(dstpath).isSymbolicLink();
       const dstDirContents = fs.readdirSync(dstDir);
       assert.strictEqual(isSymlink, true);
-      assert(dstDirContents.indexOf(dstBasename) >= 0);
+      assert(dstDirContents.includes(dstBasename));
       assert.throws(() => fs.readdirSync(dstpath), Error);
     });
   }
@@ -363,7 +364,7 @@ describe("fse-ensure-symlink", () => {
             const dstDirContents = fs.readdirSync(dstDir);
             assert.strictEqual(isSymlink, true);
             assert.strictEqual(srcContent, dstContent);
-            assert(dstDirContents.indexOf(dstBasename) >= 0);
+            assert(dstDirContents.includes(dstBasename));
           });
         });
       });

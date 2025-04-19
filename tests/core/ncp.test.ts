@@ -1,9 +1,10 @@
-import fs from "node:fs";
-import ncp from "../../copy.js";
-import path from "node:path";
-import { rimraf } from "rimraf";
 import assert from "@fs/../test-helpers";
+import fs from "node:fs";
+import path from "node:path";
 import { read as readDirFiles } from "read-dir-files";
+import { rimraf } from "rimraf";
+
+import ncp from "../../src/libs/core/core-impl/lib/copy/copy.js";
 
 /* eslint-env mocha */
 const fixturesDir = path.join(__dirname, "fixtures");
@@ -38,12 +39,11 @@ describe("ncp", () => {
       it("files are copied correctly", (cb) => {
         readDirFiles(src, "utf8", (srcErr, srcFiles) => {
           function filter(files) {
-            // eslint-disable-next-line guard-for-in
             for (const fileName in files) {
               const curFile = files[fileName];
               if (curFile instanceof Object) {
                 filter(curFile);
-              } else if (fileName.slice(-1) === "a") {
+              } else if (fileName.endsWith("a")) {
                 delete files[fileName];
               }
             }

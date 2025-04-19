@@ -1,8 +1,9 @@
-import fs from "node:fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 
 describe("+ emptyDir()", () => {
   let TEST_DIR;

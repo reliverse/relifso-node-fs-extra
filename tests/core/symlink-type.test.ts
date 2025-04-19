@@ -1,8 +1,9 @@
 import fs from "graceful-fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 import { symlinkType, symlinkTypeSync } from "../symlink-type.js";
 
 const CWD = process.cwd();

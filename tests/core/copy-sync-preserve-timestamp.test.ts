@@ -1,8 +1,9 @@
-import * as fs from "../../index.js";
-import os from "os";
-import path from "node:path";
-import { utimesMillisSync as utimesSync } from "../../util/utimes.js";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fs from "../../index.js";
+import { utimesMillisSync as utimesSync } from "../../util/utimes.js";
 
 if (process.arch === "ia32")
   console.warn("32 bit arch; skipping copySync timestamp tests");

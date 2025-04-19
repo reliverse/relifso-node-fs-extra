@@ -1,10 +1,10 @@
-import fs from "node:fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "@fs/../test-helpers";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import proxyquire from "proxyquire";
-import { universalify as u } from "@fs/universalify";
+
+import * as fse from "../../index.js";
 
 let gracefulFsStub;
 let utimes;
@@ -12,9 +12,7 @@ let utimes;
 // HFS, ext{2,3}, FAT do not
 function hasMillisResSync() {
   let tmpfile = path.join(
-    "millis-test-sync" +
-      Date.now().toString() +
-      Math.random().toString().slice(2),
+    `millis-test-sync${Date.now().toString()}${Math.random().toString().slice(2)}`,
   );
   tmpfile = path.join(os.tmpdir(), tmpfile);
   // 550 millis past UNIX epoch
@@ -26,6 +24,7 @@ function hasMillisResSync() {
   const fd = fs.openSync(tmpfile, "r+");
   fs.futimesSync(fd, d, d);
   fs.closeSync(fd);
+  // @ts-expect-error TODO: fix ts
   return fs.statSync(tmpfile).mtime > 1435410243000;
 }
 

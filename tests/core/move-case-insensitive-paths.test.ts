@@ -1,6 +1,7 @@
 import assert from "node:assert";
-import os from "os";
 import path from "node:path";
+import os from "os";
+
 import * as fs from "../../index.js";
 
 describe("+ move() - case insensitive paths", () => {

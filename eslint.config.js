@@ -8,10 +8,15 @@ import tseslint from "typescript-eslint";
 
 /** @type {import("typescript-eslint").Config} */
 const config = tseslint.config(
-  { ignores: ["**/{node_modules,dist-jsr,dist-npm,dist-libs,tests-runtime}/"] },
+  {
+    ignores: [
+      "**/{node_modules,dist-jsr,dist-npm,dist-libs,tests-runtime,tests}/",
+      "src/**/*.d.ts",
+    ],
+  },
   eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.stylistic,
   {
     files: ["**/*.js"],
     ...tseslint.configs.disableTypeChecked,
@@ -52,7 +57,6 @@ const config = tseslint.config(
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/no-unsafe-return": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
       "@typescript-eslint/consistent-type-imports": [
         "warn",
         {

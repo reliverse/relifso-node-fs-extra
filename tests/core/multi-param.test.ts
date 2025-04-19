@@ -1,7 +1,8 @@
+import crypto from "crypto";
 import assert from "node:assert";
 import path from "node:path";
-import crypto from "crypto";
 import os from "os";
+
 import * as fs from "../../index.js";
 
 const SIZE = 1000;

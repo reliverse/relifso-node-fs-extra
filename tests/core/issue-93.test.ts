@@ -1,8 +1,9 @@
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
 import util from "util";
+
+import * as fse from "../../index.js";
 
 describe("mkdirp: issue-93, win32, when drive does not exist, it should return a cleaner error", () => {
   let TEST_DIR;

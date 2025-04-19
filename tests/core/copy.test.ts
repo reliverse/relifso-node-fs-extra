@@ -1,9 +1,10 @@
-import fs from "node:fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
-import assert from "node:assert";
 import crypto from "crypto";
+import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 
 const SIZE = 16 * 64 * 1024 + 7;
 let TEST_DIR = "";

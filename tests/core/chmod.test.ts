@@ -1,8 +1,9 @@
-import fs from "node:fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 
 describe("mkdirp / chmod", () => {
   let TEST_DIR;
@@ -26,7 +27,7 @@ describe("mkdirp / chmod", () => {
       fs.stat(TEST_SUBDIR, (err, stat) => {
         assert.ifError(err, "should exist");
         assert.ok(stat && stat.isDirectory(), "should be directory");
-        if (os.platform().indexOf("win") === 0) {
+        if (os.platform().startsWith("win")) {
           assert.strictEqual(stat && stat.mode & 0o777, 0o666, "windows shit");
         } else {
           assert.strictEqual(stat && stat.mode & 0o777, mode, "should be 0744");

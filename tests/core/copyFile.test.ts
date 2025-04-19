@@ -1,7 +1,8 @@
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 
 /* eslint-env mocha */
 describe("fs.copyFile", () => {

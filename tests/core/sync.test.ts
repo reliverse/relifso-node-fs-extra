@@ -1,8 +1,9 @@
-import fs from "node:fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 
 describe("mkdirp / sync", () => {
   let TEST_DIR;
@@ -31,7 +32,7 @@ describe("mkdirp / sync", () => {
       fs.stat(file, (err, stat) => {
         assert.ifError(err);
         // http://stackoverflow.com/questions/592448/c-how-to-set-file-permissions-cross-platform
-        if (os.platform().indexOf("win") === 0) {
+        if (os.platform().startsWith("win")) {
           assert.strictEqual(stat.mode & 0o777, 0o666);
         } else {
           assert.strictEqual(stat.mode & 0o777, 0o755);

@@ -1,9 +1,10 @@
+import assert from "@fs/../test-helpers";
 import fs from "node:fs";
+import path from "node:path";
 import os from "os";
+
 import * as fse from "../../../index.js";
 import { copy as ncp } from "../../index.js";
-import path from "node:path";
-import assert from "@fs/../test-helpers";
 
 describe("ncp broken symlink", () => {
   const TEST_DIR = path.join(os.tmpdir(), "fs-extra", "ncp-broken-symlinks");

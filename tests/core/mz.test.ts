@@ -1,4 +1,5 @@
 import assert from "node:assert";
+
 import * as fs from "../../index.js";
 
 describe("fs", () => {

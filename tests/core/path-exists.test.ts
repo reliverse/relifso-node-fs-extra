@@ -1,7 +1,8 @@
-import * as fs from "../../index.js";
+import assert from "node:assert";
 import path from "node:path";
 import os from "os";
-import assert from "node:assert";
+
+import * as fs from "../../index.js";
 
 describe("pathExists()", () => {
   let TEST_DIR;

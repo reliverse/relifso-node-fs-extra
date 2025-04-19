@@ -1,10 +1,11 @@
-import fs from "graceful-fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "@fs/../test-helpers";
-import { differentDevice, ifCrossDeviceEnabled } from "./cross-device-utils.js";
+import fs from "graceful-fs";
+import os from "node:os";
+import path from "node:path";
 import { fromPromise } from "universalify";
+
+import * as fse from "../../index.js";
+import { differentDevice, ifCrossDeviceEnabled } from "./cross-device-utils.js";
 
 const describeIfWindows =
   process.platform === "win32" ? describe : describe.skip;
@@ -71,7 +72,7 @@ describe("+ move()", () => {
         fs.readFile(dest, "utf8", (err, contents) => {
           const expected = /^sonic the hedgehog\r?\n$/;
           assert.ifError(err);
-          assert.ok(contents.match(expected));
+          assert.ok(expected.exec(contents));
           done();
         });
       });
@@ -85,8 +86,8 @@ describe("+ move()", () => {
       const dest = path.join(TEST_DIR, "a-folder");
       // verify dest has stuff in it
       const paths = fs.readdirSync(dest);
-      assert(paths.indexOf("another-file") >= 0);
-      assert(paths.indexOf("another-folder") >= 0);
+      assert(paths.includes("another-file"));
+      assert(paths.includes("another-folder"));
       fse.move(src, dest, { overwrite: true }, (err) => {
         assert.ifError(err);
         // verify dest does not have old stuff
@@ -94,8 +95,8 @@ describe("+ move()", () => {
         assert.strictEqual(paths.indexOf("another-file"), -1);
         assert.strictEqual(paths.indexOf("another-folder"), -1);
         // verify dest has new stuff
-        assert(paths.indexOf("some-file") >= 0);
-        assert(paths.indexOf("some-folder") >= 0);
+        assert(paths.includes("some-file"));
+        assert(paths.includes("some-folder"));
         done();
       });
     });
@@ -113,7 +114,7 @@ describe("+ move()", () => {
           (err, contents) => {
             const expected = /^knuckles\r?\n$/;
             assert(done).ifError(err);
-            assert(done).ok(contents.match(expected));
+            assert(done).ok(expected.exec(contents));
             tearDownMockFs();
             done();
           },
@@ -130,7 +131,7 @@ describe("+ move()", () => {
         fs.readFile(dest, "utf8", (err, contents) => {
           const expected = /^sonic the hedgehog\r?\n$/;
           assert.ifError(err);
-          assert.ok(contents.match(expected));
+          assert.ok(expected.exec(contents));
           done();
         });
       });
@@ -141,7 +142,7 @@ describe("+ move()", () => {
       await fse.move(src, dest);
       const contents = fs.readFileSync(dest, "utf8");
       const expected = /^sonic the hedgehog\r?\n$/;
-      assert.ok(contents.match(expected));
+      assert.ok(expected.exec(contents));
     });
     it("should not move a file if source and destination are the same", (done) => {
       const src = path.join(TEST_DIR, "a-file");
@@ -203,7 +204,7 @@ describe("+ move()", () => {
         fs.readFile(dest, "utf8", (err, contents) => {
           const expected = /^sonic the hedgehog\r?\n$/;
           assert.ifError(err);
-          assert.ok(contents.match(expected));
+          assert.ok(expected.exec(contents));
           done();
         });
       });
@@ -220,7 +221,7 @@ describe("+ move()", () => {
         fs.readFile(dest, "utf8", (err, contents) => {
           const expected = /^sonic the hedgehog\r?\n$/;
           ass.ifError(err);
-          ass.ok(contents.match(expected));
+          ass.ok(expected.exec(contents));
           tearDownMockFs();
           done();
         });
@@ -239,7 +240,7 @@ describe("+ move()", () => {
           (err, contents) => {
             const expected = /^tails\r?\n$/;
             assert.ifError(err);
-            assert.ok(contents.match(expected));
+            assert.ok(expected.exec(contents));
             done();
           },
         );
@@ -260,7 +261,7 @@ describe("+ move()", () => {
           (err, contents) => {
             const expected = /^knuckles\r?\n$/;
             ass.ifError(err);
-            ass.ok(contents.match(expected));
+            ass.ok(expected.exec(contents));
             tearDownMockFs();
             done();
           },
@@ -277,7 +278,7 @@ describe("+ move()", () => {
         fs.readFile(dest, "utf8", (err, contents) => {
           const expected = /^sonic the hedgehog\r?\n$/;
           assert.ifError(err);
-          assert.ok(contents.match(expected));
+          assert.ok(expected.exec(contents));
           done();
         });
       });
@@ -288,7 +289,7 @@ describe("+ move()", () => {
       await fse.move(src, dest, undefined);
       const contents = fs.readFileSync(dest, "utf8");
       const expected = /^sonic the hedgehog\r?\n$/;
-      assert.ok(contents.match(expected));
+      assert.ok(expected.exec(contents));
     });
   });
   describeIfWindows("> when dest parent is root", () => {
@@ -305,7 +306,7 @@ describe("+ move()", () => {
         fs.readFile(dest, "utf8", (err, contents) => {
           const expected = /^sonic the hedgehog\r?\n$/;
           ass.ifError(err);
-          ass.ok(contents.match(expected));
+          ass.ok(expected.exec(contents));
           done();
         });
       });
@@ -322,7 +323,7 @@ describe("+ move()", () => {
         fs.readFile(dest, "utf8", (err, contents) => {
           const expected = /^sonic the hedgehog\r?\n$/;
           assert(done).ifError(err);
-          assert(done).ok(contents.match(expected));
+          assert(done).ok(expected.exec(contents));
           done();
         });
       });

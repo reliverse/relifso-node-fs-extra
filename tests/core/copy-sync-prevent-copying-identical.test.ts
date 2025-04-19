@@ -1,8 +1,9 @@
-import assert from "node:assert";
-import os from "os";
-import path from "node:path";
-import * as fs from "../../index.js";
 import klawSync from "klaw-sync";
+import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fs from "../../index.js";
 
 describe("+ copySync() - prevent copying identical files and dirs", () => {
   let TEST_DIR = "";

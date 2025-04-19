@@ -1,8 +1,9 @@
-import os from "os";
-import fs from "node:fs";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 
 describe("native fs", () => {
   let TEST_DIR;

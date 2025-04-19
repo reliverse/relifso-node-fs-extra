@@ -1,6 +1,6 @@
+import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
-import assert from "node:assert";
 
 /* eslint-env mocha */
 describe("realpath.native does not exist", () => {
@@ -32,7 +32,7 @@ describe("realpath.native does not exist", () => {
     // clear existing require.cache
     clearFseCache();
     // simulate fs monkey-patch
-    delete fs.realpath.native;
+    fs.realpath.native = undefined;
   });
   after(() => {
     process.off("warning", warningListener);
@@ -47,12 +47,13 @@ describe("realpath.native does not exist", () => {
       assert(warning, "fs-extra-WARN0003 should be emitted");
       done();
     });
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     assert(!require("../../index.js").realpath.native);
   });
 });
 describe("realpath.native", () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const fse = require("../../index.js");
 
   it("works with callbacks", () => {

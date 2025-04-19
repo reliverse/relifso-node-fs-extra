@@ -1,8 +1,9 @@
-import fs from "node:fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 import { differentDevice, ifCrossDeviceEnabled } from "./cross-device-utils.js";
 
 const describeIfWindows =
@@ -54,7 +55,7 @@ describe("moveSync()", () => {
     // assert src not affected
     const contents = fs.readFileSync(src, "utf8");
     const expected = /^sonic the hedgehog\r?\n$/;
-    assert(contents.match(expected));
+    assert(expected.exec(contents));
   });
   it("should error if src and dest are the same and src does not exist", () => {
     const src = `${TEST_DIR}/non-existent`;
@@ -67,7 +68,7 @@ describe("moveSync()", () => {
     fse.moveSync(src, dest);
     const contents = fs.readFileSync(dest, "utf8");
     const expected = /^sonic the hedgehog\r?\n$/;
-    assert(contents.match(expected));
+    assert(expected.exec(contents));
   });
   it("should not overwrite the destination by default", () => {
     const src = `${TEST_DIR}/a-file`;
@@ -99,7 +100,7 @@ describe("moveSync()", () => {
     fse.moveSync(src, dest, { overwrite: true });
     const contents = fs.readFileSync(dest, "utf8");
     const expected = /^sonic the hedgehog\r?\n$/;
-    assert.ok(contents.match(expected));
+    assert.ok(expected.exec(contents));
   });
   it("should overwrite the destination directory if overwrite = true", () => {
     // Create src
@@ -110,16 +111,16 @@ describe("moveSync()", () => {
     const dest = path.join(TEST_DIR, "a-folder");
     // verify dest has stuff in it
     const pathsBefore = fs.readdirSync(dest);
-    assert(pathsBefore.indexOf("another-file") >= 0);
-    assert(pathsBefore.indexOf("another-folder") >= 0);
+    assert(pathsBefore.includes("another-file"));
+    assert(pathsBefore.includes("another-folder"));
     fse.moveSync(src, dest, { overwrite: true });
     // verify dest does not have old stuff
     const pathsAfter = fs.readdirSync(dest);
     assert.strictEqual(pathsAfter.indexOf("another-file"), -1);
     assert.strictEqual(pathsAfter.indexOf("another-folder"), -1);
     // verify dest has new stuff
-    assert(pathsAfter.indexOf("some-file") >= 0);
-    assert(pathsAfter.indexOf("some-folder") >= 0);
+    assert(pathsAfter.includes("some-file"));
+    assert(pathsAfter.includes("some-folder"));
   });
   it("should create directory structure by default", () => {
     const src = `${TEST_DIR}/a-file`;
@@ -129,7 +130,7 @@ describe("moveSync()", () => {
     fse.moveSync(src, dest);
     const contents = fs.readFileSync(dest, "utf8");
     const expected = /^sonic the hedgehog\r?\n$/;
-    assert(contents.match(expected));
+    assert(expected.exec(contents));
   });
   it("should work across devices", () => {
     const src = `${TEST_DIR}/a-file`;
@@ -138,7 +139,7 @@ describe("moveSync()", () => {
     fse.moveSync(src, dest);
     const contents = fs.readFileSync(dest, "utf8");
     const expected = /^sonic the hedgehog\r?\n$/;
-    assert(contents.match(expected));
+    assert(expected.exec(contents));
     tearDownMockFs();
   });
   it("should move folders", () => {
@@ -149,7 +150,7 @@ describe("moveSync()", () => {
     fse.moveSync(src, dest);
     const contents = fs.readFileSync(dest + "/another-file", "utf8");
     const expected = /^tails\r?\n$/;
-    assert(contents.match(expected));
+    assert(expected.exec(contents));
   });
   it("should overwrite folders across devices", () => {
     const src = `${TEST_DIR}/a-folder`;
@@ -159,7 +160,7 @@ describe("moveSync()", () => {
     fse.moveSync(src, dest, { overwrite: true });
     const contents = fs.readFileSync(dest + "/another-folder/file3", "utf8");
     const expected = /^knuckles\r?\n$/;
-    assert(contents.match(expected));
+    assert(expected.exec(contents));
     tearDownMockFs();
   });
   it("should move folders across devices with EXDEV error", () => {
@@ -169,7 +170,7 @@ describe("moveSync()", () => {
     fse.moveSync(src, dest);
     const contents = fs.readFileSync(dest + "/another-folder/file3", "utf8");
     const expected = /^knuckles\r?\n$/;
-    assert(contents.match(expected));
+    assert(expected.exec(contents));
     tearDownMockFs();
   });
   describe("clobber", () => {
@@ -181,7 +182,7 @@ describe("moveSync()", () => {
       fse.moveSync(src, dest, { clobber: true });
       const contents = fs.readFileSync(dest, "utf8");
       const expected = /^sonic the hedgehog\r?\n$/;
-      assert(contents.match(expected));
+      assert(expected.exec(contents));
     });
   });
   describe("> when trying to move a folder into itself", () => {
@@ -207,7 +208,7 @@ describe("moveSync()", () => {
       fse.moveSync(src, dest);
       const contents = fs.readFileSync(dest, "utf8");
       const expected = /^sonic the hedgehog\r?\n$/;
-      assert(contents.match(expected));
+      assert(expected.exec(contents));
     });
   });
   describeIfWindows("> when dest parent is root", () => {
@@ -219,7 +220,7 @@ describe("moveSync()", () => {
       fse.moveSync(src, dest);
       const contents = fs.readFileSync(dest, "utf8");
       const expected = /^sonic the hedgehog\r?\n$/;
-      assert(contents.match(expected));
+      assert(expected.exec(contents));
     });
   });
   ifCrossDeviceEnabled(describe)(

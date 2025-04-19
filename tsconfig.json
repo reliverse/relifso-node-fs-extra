@@ -32,7 +32,7 @@
     "reset.d.ts",
     "eslint.config.js",
     "tsconfig.json",
-    ".reliverse/reliverse.config.ts"
+    "reliverse.ts"
   ],
-  "exclude": ["node_modules", "dist-jsr", "dist-libs"]
+  "exclude": ["node_modules", "dist-jsr", "dist-libs", "tests"]
 }

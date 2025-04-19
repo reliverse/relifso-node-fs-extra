@@ -1,7 +1,8 @@
-import fs from "node:fs";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import fs from "node:fs";
+import path from "node:path";
+
+import * as fse from "../../index.js";
 
 describe("mkdirp / root", () => {
   // '/' on unix

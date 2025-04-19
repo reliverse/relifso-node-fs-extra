@@ -1,8 +1,9 @@
+import { randomBytes as randomBytes$0 } from "crypto";
 import assert from "node:assert";
 import fs from "node:fs";
-import os from "os";
 import path from "node:path";
-import { randomBytes as randomBytes$0 } from "crypto";
+import os from "os";
+
 import * as fse from "../../index.js";
 
 const randomBytes = { randomBytes: randomBytes$0 }.randomBytes;

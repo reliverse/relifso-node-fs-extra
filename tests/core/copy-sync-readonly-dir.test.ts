@@ -1,8 +1,9 @@
-import os from "os";
-import * as fs from "../../index.js";
-import path from "node:path";
-import assert from "node:assert";
 import klawSync from "klaw-sync";
+import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fs from "../../index.js";
 
 let TEST_DIR = "";
 const FILES = [

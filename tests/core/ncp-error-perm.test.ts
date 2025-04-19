@@ -1,9 +1,10 @@
+import assert from "node:assert";
 import fs from "node:fs";
+import path from "node:path";
 import os from "os";
+
 import * as fse from "../../../index.js";
 import ncp from "../../copy.js";
-import path from "node:path";
-import assert from "node:assert";
 
 // skip test for windows
 // eslint-disable globalReturn */
@@ -15,7 +16,7 @@ describe("ncp / error / dest-permission", () => {
   const dest = path.join(TEST_DIR, "dest");
   // when we are root, then we will be able to create the subdirectory even if
   // we don't have the permissions to do so, so no point in running this test
-  if (os.platform().indexOf("win") === 0 || os.userInfo().uid === 0) return;
+  if (os.platform().startsWith("win") || os.userInfo().uid === 0) return;
   beforeEach((done) => {
     fse.emptyDir(TEST_DIR, (err) => {
       assert.ifError(err);

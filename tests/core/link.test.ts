@@ -1,8 +1,9 @@
 import fs from "graceful-fs";
-import os from "os";
-import * as fse from "../../index.js";
-import path from "node:path";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fse from "../../index.js";
 
 const CWD = process.cwd();
 const ensureLink = fse.ensureLink;
@@ -103,7 +104,7 @@ describe("fse-ensure-link", () => {
         const dstDirContents = fs.readdirSync(dstDir);
         assert.strictEqual(isSymlink, true);
         assert.strictEqual(srcContent, dstContent);
-        assert(dstDirContents.indexOf(dstBasename) >= 0);
+        assert(dstDirContents.includes(dstBasename));
         return done();
       };
       args.push(callback);
@@ -139,7 +140,7 @@ describe("fse-ensure-link", () => {
       const dstDirContents = fs.readdirSync(dstDir);
       assert.strictEqual(isSymlink, true);
       assert.strictEqual(srcContent, dstContent);
-      assert(dstDirContents.indexOf(dstBasename) >= 0);
+      assert(dstDirContents.includes(dstBasename));
     });
   }
   function fileErrorSync(args, fn) {
@@ -196,7 +197,7 @@ describe("fse-ensure-link", () => {
             const dstDirContents = fs.readdirSync(dstDir);
             assert.strictEqual(isSymlink, true);
             assert.strictEqual(srcContent, dstContent);
-            assert(dstDirContents.indexOf(dstBasename) >= 0);
+            assert(dstDirContents.includes(dstBasename));
           });
         });
       });

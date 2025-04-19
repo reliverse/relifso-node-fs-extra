@@ -1,9 +1,10 @@
-import * as fs from "../../index.js";
-import os from "os";
-import path from "node:path";
-import * as utimes from "../../util/utimes.js";
 import assert from "node:assert";
+import path from "node:path";
+import os from "os";
+
+import * as fs from "../../index.js";
 import * as fse from "../../index.js";
+import * as utimes from "../../util/utimes.js";
 import { differentDevice, ifCrossDeviceEnabled } from "./cross-device-utils.js";
 
 const utimesSync = { default: utimes }.default.utimesMillisSync;
