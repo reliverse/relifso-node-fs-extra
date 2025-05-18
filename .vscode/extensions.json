@@ -1,7 +1,10 @@
 {
   "recommendations": [
+    "aaron-bond.better-comments",
+    "biomejs.biome",
     "chunsen.bracket-select",
-    "usernamehw.remove-empty-lines",
-    "aaron-bond.better-comments"
+    "fabiospampinato.vscode-open-multiple-files",
+    "usernamehw.errorlens",
+    "usernamehw.remove-empty-lines"
   ]
 }

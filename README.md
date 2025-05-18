@@ -1,8 +1,8 @@
-# Reliverse Relifso
+# Relifso • Node.js Filesystem Toolkit Library
 
-[💖 GitHub Sponsors](https://github.com/sponsors/blefnk) • [📦 NPM](https://npmjs.com/package/@reliverse/relifso) • [✨ Repo](https://github.com/reliverse/relifso) • [💬 Discord](https://discord.gg/Pb8uKbwpsJ)
+[sponsor](https://github.com/sponsors/blefnk) — [discord](https://discord.gg/Pb8uKbwpsJ) — [npm](https://npmjs.com/package/@reliverse/relifso) — [repo](https://github.com/reliverse/relifso)
 
-> **@reliverse/relifso** is a modern filesystem toolkit for builders. Drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with ES modules, and packed with Bun-specific features and DX-focused utilities.
+> **@reliverse/relifso** is a modern filesystem toolkit for builders. Drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with ES modules, and packed with DX-focused utilities.
 
 - 🪄 Everything you love from `fs-extra` — now simpler, cleaner, and more beginner-friendly
 - ⚙️ Drop-in replacement for `node:fs` — with native `Promise`, `async/await`, and sync variants
@@ -15,18 +15,41 @@
 - 🧪 **Soon**: Ready for upcoming Node.js v22+ experimental features
 - ✌️ **Soon**: Bun v1.2+ ready — ships with Bun-aware enhancements out of the box
 - 🔥 **Soon**: Bun-specific features are exposed via `fs.*` when running on Bun
-- ✂️ **Soon**: We plan to divide Relifso into smaller packages like `-legacy`, `-bun`, `-cjs`, etc.
+
+## Heads Up
+
+- **Most of the things** mentioned in this doc **aren’t implemented yet** — they’re part of the vision for ~`v1.3.0`.
+- Got thoughts? Ideas? Send your feedback in [Discord](https://discord.gg/Pb8uKbwpsJ) or use [GitHub Issues](https://github.com/reliverse/relifso/issues).
+- Your feedback means the world and helps shape where this project goes next. Thank you!
 
 ## Install
 
 ```bash
-bun add @reliverse/relifso
 # bun • pnpm • yarn • npm
+bun add @reliverse/relifso
+```
+
+**Migrate**:
+
+```bash
+bun rm fs-extra
+bun rm @types/fs-extra
+# soon:
+# bun add -D @reliverse/dler
+# bun dler relifso node-fs to relifso
+# bun dler relifso fs-extra to relifso
+```
+
+**Coming soon**:
+
+```bash
+bun add -D @reliverse/dler
+bun dler relifso init ...
 ```
 
 ## Usage
 
-Check [./example/e-main.ts](./example/e-main.ts) for a full example. You can clone this repo and run via `bun dev`.
+Check [./example/e-mod.ts](./example/e-mod.ts) for a full example. You can clone this repo and run via `bun dev`.
 
 Relifso works just like `fs-extra` — every method is promise-first, ergonomic, and future-ready.
 
@@ -251,8 +274,8 @@ All async methods return a `Promise` if no callback is passed.
 
 ## TODO
 
-- [x] Create usage example in [./example/e-main.ts](./example/e-main.ts)
-- [ ] Ensure [./example/e-main.ts](./example/e-main.ts) works 100% correctly
+- [x] Create usage example in [./example/e-mod.ts](./example/e-mod.ts)
+- [ ] Ensure [./example/e-mod.ts](./example/e-mod.ts) works 100% correctly
 - [ ] Consider using [@reliverse/repath](https://github.com/reliverse/repath) instead of just `node:path`.
 - [ ] Pass all `fs-extra` tests with Bun/Vitest (+ fix & improve them).
 - [ ] Convert all jsdoc comments to TypeScript types.
@@ -265,7 +288,6 @@ Relifso wouldn’t be so cool without these gems:
 - [node:fs](https://nodejs.org/api/fs.html)+[node:path](https://nodejs.org/api/path.html) — origins
 - [`fs-extra`](https://github.com/jprichardson/node-fs-extra) — classic, reliable
 - [`fsxt`](https://github.com/uwx-node-modules/fsxt) — full fs-extra overhaul
-- [`fs-lite`](https://github.com/baooab/node-fs-lite) — no-deps, fully-typed
 
 ## Show Some Love
 
@@ -277,7 +299,4 @@ If `@reliverse/relifso` reduced the number of lines in your codebase:
 
 ## License
 
-Welcome to the Reliverse — we build tools that builders want.
-
-MIT © 2025 [blefnk Nazar Kornienko](https://github.com/blefnk)
-`
+[MIT](./LICENSE) © 2025 [Nazar Kornienko (blefnk)](https://github.com/blefnk)
