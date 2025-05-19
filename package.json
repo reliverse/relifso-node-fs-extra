@@ -1,22 +1,13 @@
 {
   "name": "@reliverse/relifso",
-  "version": "1.2.0",
-  "description": "@reliverse/relifso is a modern filesystem toolkit for builders. Drop-in replacement for node:fs and fs-extra — powered by native promises, built with ES modules, and packed with DX-focused utilities.",
+  "version": "1.2.2",
+  "type": "module",
+  "description": "@reliverse/relifso is a modern filesystem toolkit for builders. drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with es modules, and packed with dx-focused utilities.",
   "scripts": {
     "pub": "dler pub",
     "dev": "bun example/e-mod.ts",
     "latest": "bun update --latest && bun check",
-    "check": "eslint --cache --fix . && biome check --write . && tsc --noEmit && knip",
-    "agg": "dler tools --tool agg --input src/libs/core/core-impl --out src/libs/core/core-mod.ts --recursive --named --strip src/libs/core"
-  },
-  "type": "module",
-  "dependencies": {
-    "@reliverse/relinka": "^1.4.5",
-    "fs-extra": "^11.3.0",
-    "jsonfile": "^6.1.0",
-    "magic-string": "^0.30.17",
-    "p-map": "^7.0.3",
-    "zeptomatch": "^2.0.1"
+    "check": "eslint --cache --fix . && biome check --write . && tsc --noEmit && knip"
   },
   "devDependencies": {
     "@babel/plugin-transform-block-scoping": "^7.27.1",
@@ -40,7 +31,7 @@
     "@types/klaw-sync": "^6.0.5",
     "@types/minimist": "^1.2.5",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^22.15.18",
+    "@types/node": "^22.15.19",
     "@types/proxyquire": "^1.3.31",
     "@types/universalify": "^1.0.3",
     "@types/verror": "^1.10.11",
@@ -51,7 +42,9 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-no-relative-import-paths": "^1.6.1",
     "eslint-plugin-perfectionist": "^4.13.0",
+    "fs-extra": "^11.3.0",
     "graceful-fs": "^4.2.11",
+    "jsonfile": "^6.1.0",
     "klaw": "^4.1.0",
     "klaw-sync": "^7.0.0",
     "knip": "^5.56.0",

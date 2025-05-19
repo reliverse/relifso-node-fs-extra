@@ -78,7 +78,7 @@ export function* diveSync(
           yield* walk(entryPath, depth + 1);
         }
       }
-      // Not handling symlinks, block devices, etc. explicitly for simplicity, similar to fs-extra's basic dive
+      // Not handling symlinks, block devices, etc., similar to fs-extra's basic dive
     }
   }
 

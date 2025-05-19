@@ -1,7 +1,9 @@
 import { renameSync, statSync, unlinkSync, copyFileSync } from "node:fs";
+import { rename, stat, unlink, copyFile } from "node:fs/promises";
 import { dirname, basename, join as joinPath } from "node:path";
 
 import { mkdirsSync } from "./mkdirs.js";
+import { mkdirs } from "./mkdirs.js";
 
 export interface MoveOptions {
   overwrite?: boolean;
@@ -61,6 +63,63 @@ export function moveSync(src: string, dest: string, options: MoveOptions = {}): 
       // fs-extra seems to just copy and remove in this case too.
       copyFileSync(src, destFinal);
       unlinkSync(src);
+    } else {
+      throw err;
+    }
+  }
+}
+
+export async function move(src: string, dest: string, options: MoveOptions = {}): Promise<void> {
+  let overwrite: boolean;
+  if (options.overwrite !== undefined) {
+    overwrite = options.overwrite;
+  } else if (options.clobber !== undefined) {
+    console.warn(
+      "Warning: The 'clobber' option in move is deprecated and will be removed in a future version. Please use 'overwrite' instead.",
+    );
+    overwrite = options.clobber;
+  } else {
+    overwrite = false;
+  }
+
+  const srcStat = await stat(src).catch((e) => {
+    if (e.code === "ENOENT") return null;
+    throw e;
+  });
+  if (!srcStat) {
+    // Source does not exist, let rename handle this to throw appropriate error.
+  }
+
+  let destFinal = dest;
+  const destStat = await stat(dest).catch((e) => {
+    if (e.code === "ENOENT") return null;
+    throw e;
+  });
+
+  if (destStat?.isDirectory()) {
+    destFinal = joinPath(dest, basename(src));
+  }
+
+  const destFinalStat = await stat(destFinal).catch((e) => {
+    if (e.code === "ENOENT") return null;
+    throw e;
+  });
+  if (destFinalStat && !overwrite) {
+    throw new Error(`Destination ${destFinal} already exists and overwrite is false.`);
+  }
+
+  const destDir = dirname(destFinal);
+  await mkdirs(destDir);
+
+  try {
+    await rename(src, destFinal);
+  } catch (err: any) {
+    if (err.code === "EXDEV") {
+      await copyFile(src, destFinal);
+      await unlink(src);
+    } else if (err.code === "EISDIR" || err.code === "EPERM") {
+      await copyFile(src, destFinal);
+      await unlink(src);
     } else {
       throw err;
     }

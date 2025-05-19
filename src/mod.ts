@@ -1,39 +1,24 @@
 import type { Stats, Dirent } from "node:fs";
 
-import { readdir, stat } from "node:fs/promises";
+import { readdir as nodeReaddirInternal, stat as nodeStatInternal, readdir, stat } from "node:fs/promises";
 import { join as pathJoin } from "node:path";
 
 import type { DiveOptions } from "./impl/dive.js";
 
-import { toAsync } from "./impl/async.js";
-import { copySync } from "./impl/copy.js";
-import { createFileSync } from "./impl/create-file.js";
+import { copy, copySync } from "./impl/copy.js";
+import { createFile, createFileSync } from "./impl/create-file.js";
 import { diveSync } from "./impl/dive.js";
-import { emptyDirSync } from "./impl/empty-dir.js";
-import { mkdirsSync } from "./impl/mkdirs.js";
-import { moveSync } from "./impl/move.js";
-import { outputFileSync } from "./impl/output-file.js";
-import { outputJsonSync } from "./impl/output-json.js";
-import { pathExistsSync } from "./impl/path-exists.js";
-import { readFileSync } from "./impl/read-file.js";
-import { readJsonSync, type ReadJsonOptions } from "./impl/read-json.js";
-import { removeSync } from "./impl/remove.js";
-import { writeFileSync } from "./impl/write-file.js";
-import { writeJsonSync } from "./impl/write-json.js";
-
-const readJson = toAsync(readJsonSync) as <T>(file: string, options?: BufferEncoding | ReadJsonOptions) => Promise<T>;
-const writeJson = toAsync(writeJsonSync);
-const createFile = toAsync(createFileSync);
-const writeFile = toAsync(writeFileSync);
-const readFile = toAsync(readFileSync);
-const mkdirs = toAsync(mkdirsSync);
-const emptyDir = toAsync(emptyDirSync);
-const pathExists = toAsync(pathExistsSync);
-const copy = toAsync(copySync);
-const move = toAsync(moveSync);
-const remove = toAsync(removeSync);
-const outputJson = toAsync(outputJsonSync);
-const outputFile = toAsync(outputFileSync);
+import { emptyDir, emptyDirSync } from "./impl/empty-dir.js";
+import { mkdirs, mkdirsSync } from "./impl/mkdirs.js";
+import { move, moveSync } from "./impl/move.js";
+import { outputFile, outputFileSync } from "./impl/output-file.js";
+import { outputJson, outputJsonSync } from "./impl/output-json.js";
+import { pathExists, pathExistsSync } from "./impl/path-exists.js";
+import { readFile, readFileSync } from "./impl/read-file.js";
+import { readJson, readJsonSync, type ReadJsonOptions as _ReadJsonOptions } from "./impl/read-json.js";
+import { remove, removeSync } from "./impl/remove.js";
+import { writeFile, writeFileSync } from "./impl/write-file.js";
+import { writeJson, writeJsonSync } from "./impl/write-json.js";
 
 // Helper async generator
 async function* _diveWorker(
@@ -48,7 +33,8 @@ async function* _diveWorker(
 
   let entries: Dirent[];
   try {
-    entries = await readdir(currentPath, { withFileTypes: true });
+    // Use the internally imported readdir from node:fs/promises
+    entries = await nodeReaddirInternal(currentPath, { withFileTypes: true });
   } catch (_err) {
     // TODO: How to handle permission errors etc.? For now, maybe we can rethrow or log.
     // fs-extra's dive seems to swallow errors on readdir and continue, which might be desirable.
@@ -75,7 +61,8 @@ async function* _diveWorker(
 
     let entryStat: Stats;
     try {
-      entryStat = await stat(entryPath); // stat follows symlinks by default
+      // Use the internally imported stat from node:fs/promises
+      entryStat = await nodeStatInternal(entryPath);
     } catch (_err) {
       // Failed to stat (e.g. broken symlink, permissions), skip this entry
       // console.error(`Error stating file ${entryPath}:`, err);
@@ -160,9 +147,6 @@ const ensureFileSync = createFileSync;
 const rimrafSync = removeSync;
 const ncpSync = copySync;
 
-export * from "node:fs";
-export { default } from "node:fs";
-
 export {
   // async methods
   readJson,
@@ -176,6 +160,8 @@ export {
   copy,
   move,
   remove,
+  readdir,
+  stat,
   // sync methods
   readJsonSync,
   writeJsonSync,

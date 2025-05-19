@@ -1,8 +1,10 @@
 # Relifso • Node.js Filesystem Toolkit Library
 
-[sponsor](https://github.com/sponsors/blefnk) — [discord](https://discord.gg/Pb8uKbwpsJ) — [npm](https://npmjs.com/package/@reliverse/relifso) — [repo](https://github.com/reliverse/relifso)
+> @reliverse/relifso is a modern filesystem toolkit for builders. drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with es modules, and packed with dx-focused utilities.
 
-> **@reliverse/relifso** is a modern filesystem toolkit for builders. Drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with ES modules, and packed with DX-focused utilities.
+[sponsor](https://github.com/sponsors/blefnk) — [discord](https://discord.gg/Pb8uKbwpsJ) — [npm](https://npmjs.com/package/@reliverse/relifso) — [github](https://github.com/reliverse/relifso)
+
+## Features
 
 - 🪄 Everything you love from `fs-extra` — now simpler, cleaner, and more beginner-friendly
 - ⚙️ Drop-in replacement for `node:fs` — with native `Promise`, `async/await`, and sync variants
@@ -285,7 +287,7 @@ All async methods return a `Promise` if no callback is passed.
 
 Relifso wouldn’t be so cool without these gems:
 
-- [node:fs](https://nodejs.org/api/fs.html)+[node:path](https://nodejs.org/api/path.html) — origins
+- [`node:fs`](https://nodejs.org/api/fs.html)+[`node:path`](https://nodejs.org/api/path.html) — origins
 - [`fs-extra`](https://github.com/jprichardson/node-fs-extra) — classic, reliable
 - [`fsxt`](https://github.com/uwx-node-modules/fsxt) — full fs-extra overhaul
 
