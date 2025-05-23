@@ -7,7 +7,7 @@ import { writeFile } from "./write-file.js";
 
 export interface JsonStringifyOptions {
   replacer?: (key: string, value: unknown) => unknown | (number | string)[] | null;
-  space?: string | number;
+  spaces?: string | number;
 }
 
 export interface WriteJsonOptions {
@@ -15,7 +15,7 @@ export interface WriteJsonOptions {
   mode?: Mode;
   flag?: OpenMode;
   replacer?: (key: string, value: unknown) => unknown | (number | string)[] | null;
-  space?: string | number;
+  spaces?: string | number;
   // signal?: AbortSignal;
 }
 
@@ -28,7 +28,7 @@ export interface WriteJsonOptions {
  */
 export function writeJsonSync(file: string, object: unknown, options: WriteJsonOptions = {}): void {
   const replacer = options.replacer === undefined ? null : options.replacer;
-  const space = options.space === undefined ? 2 : options.space;
+  const spaces = options.spaces === undefined ? 2 : options.spaces;
 
   const fileWriteOpts: WriteFileOptions = {};
   // Ensuring options passed to writeFileSync conform to its expected WriteFileOptions type
@@ -37,7 +37,7 @@ export function writeJsonSync(file: string, object: unknown, options: WriteJsonO
   if (options.flag !== undefined) fileWriteOpts.flag = options.flag.toString();
   // if (options.signal !== undefined) fileWriteOpts.signal = options.signal;
 
-  const str = JSON.stringify(object, replacer as any, space);
+  const str = JSON.stringify(object, replacer as any, spaces);
   writeFileSync(file, str, fileWriteOpts);
 }
 
@@ -50,7 +50,7 @@ export function writeJsonSync(file: string, object: unknown, options: WriteJsonO
  */
 export async function writeJson(file: string, object: unknown, options: WriteJsonOptions = {}): Promise<void> {
   const replacer = options.replacer === undefined ? null : options.replacer;
-  const space = options.space === undefined ? 2 : options.space;
+  const spaces = options.spaces === undefined ? 2 : options.spaces;
 
   const fileWriteOpts: WriteFileOptions = {};
   // Ensuring options passed to writeFile conform to its expected WriteFileOptions type
@@ -59,6 +59,6 @@ export async function writeJson(file: string, object: unknown, options: WriteJso
   if (options.flag !== undefined) fileWriteOpts.flag = options.flag.toString();
   // if (options.signal !== undefined) fileWriteOpts.signal = options.signal;
 
-  const str = JSON.stringify(object, replacer as any, space);
+  const str = JSON.stringify(object, replacer as any, spaces);
   await writeFile(file, str, fileWriteOpts);
 }

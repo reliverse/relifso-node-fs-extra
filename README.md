@@ -12,7 +12,7 @@
 - 🧯 Gracefully handles errors like `EMFILE` (reading or writing a lot of files at once) and other edge cases
 - 📚 Consistent error-first behavior — even for legacy APIs like `fs.exists()`
 - 📦 First-class ESM and full TypeScript support — no config hacks required
-- 🧼 Zero bloat — minimal deps, modern code, no monkey-patching
+- 🧼 Zero bloat — small size ([3.9 kB](https://bundlephobia.com/package/@reliverse/relifso@latest)), zero deps, modern code, no monkey-patching
 - 🎯 Supports all Node.js v16+ features — optimized for Node.js v22+
 - 🧪 **Soon**: Ready for upcoming Node.js v22+ experimental features
 - ✌️ **Soon**: Bun v1.2+ ready — ships with Bun-aware enhancements out of the box
@@ -51,7 +51,7 @@ bun dler relifso init ...
 
 ## Usage
 
-Check [./example/e-mod.ts](./example/e-mod.ts) for a full example. You can clone this repo and run via `bun dev`.
+Check [./e-relifso.ts](./e-relifso.ts) and [./e-pathkit.ts](./e-pathkit.ts) for a full examples. You can clone this repo and run via `bun dev`.
 
 Relifso works just like `fs-extra` — every method is promise-first, ergonomic, and future-ready.
 
@@ -276,10 +276,10 @@ All async methods return a `Promise` if no callback is passed.
 
 ## TODO
 
-- [x] Create usage example in [./example/e-mod.ts](./example/e-mod.ts)
-- [ ] Ensure [./example/e-mod.ts](./example/e-mod.ts) works 100% correctly
+- [x] Create usage example in [./e-relifso.ts](./e-relifso.ts) and [./e-pathkit.ts](./e-pathkit.ts)
+- [ ] Ensure [./e-relifso.ts](./e-relifso.ts) and [./e-pathkit.ts](./e-pathkit.ts) works 100% correctly
 - [ ] Consider using [@reliverse/repath](https://github.com/reliverse/repath) instead of just `node:path`.
-- [ ] Pass all `fs-extra` tests with Bun/Vitest (+ fix & improve them).
+- [ ] Pass all `fs-extra` tests with Bun (+ fix & improve them).
 - [ ] Convert all jsdoc comments to TypeScript types.
 - [ ] Fully improve all `fs-extra` codebase files.
 

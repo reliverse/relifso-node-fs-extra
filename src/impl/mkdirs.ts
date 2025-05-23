@@ -1,24 +1,38 @@
 import { mkdirSync, existsSync } from "node:fs";
 import { mkdir, stat } from "node:fs/promises";
 
-export function mkdirsSync(dir: string) {
+interface MakeDirectoryOptions {
+  recursive?: boolean;
+  mode?: number | string;
+}
+
+export function mkdirsSync(dir: string, options?: MakeDirectoryOptions) {
   if (existsSync(dir)) {
     return;
   }
-
-  return mkdirSync(dir, { recursive: true });
+  // mkdirsSync is inherently recursive, so we always pass recursive: true.
+  // We pass the mode if provided in options.
+  return mkdirSync(dir, { recursive: true, mode: options?.mode });
 }
 
-export async function mkdirs(dir: string): Promise<string | undefined> {
+export async function mkdirs(dir: string, options?: MakeDirectoryOptions): Promise<string | undefined> {
   try {
-    await stat(dir);
-    return undefined; // Directory already exists
-  } catch (error: any) {
-    if (error.code === "ENOENT") {
-      // Directory does not exist, create it
-      return mkdir(dir, { recursive: true });
+    // Check if directory exists using stat
+    const dirStat = await stat(dir);
+    if (dirStat.isDirectory()) {
+      return undefined; // Directory already exists
     }
-    // Other error, rethrow
-    throw error;
+    // If path exists but is not a directory, this is an error case fs-extra would throw in.
+    // For now, we let it proceed to mkdir which will likely error, or handle as needed.
+  } catch (error: any) {
+    if (error.code !== "ENOENT") {
+      // Re-throw errors other than "file not found"
+      throw error;
+    }
+    // If error is ENOENT, directory does not exist, so we proceed to create it.
   }
+
+  // mkdirs is inherently recursive, so we always pass recursive: true.
+  // We pass the mode if provided in options.
+  return mkdir(dir, { recursive: true, mode: options?.mode });
 }

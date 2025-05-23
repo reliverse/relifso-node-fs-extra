@@ -10,7 +10,7 @@ import { writeJson } from "./write-json.js";
  *
  * @param file - The path to the file.
  * @param data - The JSON data to write.
- * @param options - Options for writing the JSON file (e.g., replacer, space).
+ * @param options - Options for writing the JSON file (e.g., replacer, spaces).
  */
 export function outputJsonSync(file: string, data: unknown, options?: unknown): void {
   const dir = dirname(file);
@@ -23,7 +23,7 @@ export function outputJsonSync(file: string, data: unknown, options?: unknown): 
  *
  * @param file - The path to the file.
  * @param data - The JSON data to write.
- * @param options - Options for writing the JSON file (e.g., replacer, space).
+ * @param options - Options for writing the JSON file (e.g., replacer, spaces).
  */
 export async function outputJson(file: string, data: unknown, options?: unknown): Promise<void> {
   const dir = dirname(file);

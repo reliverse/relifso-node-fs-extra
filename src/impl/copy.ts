@@ -1,5 +1,11 @@
-import { copyFileSync, statSync, constants as fsConstants } from "node:fs";
-import { stat as statAsync, copyFile as copyFileAsync, constants as fsConstantsAsync } from "node:fs/promises";
+import { copyFileSync, statSync, constants as fsConstants, readdirSync, rmSync } from "node:fs";
+import {
+  stat as statAsync,
+  copyFile as copyFileAsync,
+  constants as fsConstantsAsync,
+  readdir,
+  rm,
+} from "node:fs/promises";
 import { dirname, join as joinPath, basename as basenamePath } from "node:path";
 
 import { mkdirsSync } from "./mkdirs.js";
@@ -37,7 +43,8 @@ export function copySync(src: string, dest: string, options: CopyOptions = {}): 
   let destFinal = dest;
   const destStat = statSync(dest, { throwIfNoEntry: false });
 
-  if (destStat?.isDirectory()) {
+  // Only append basename for files being copied into directories
+  if (!srcStat.isDirectory() && destStat?.isDirectory()) {
     destFinal = joinPath(dest, basenamePath(src));
   }
 
@@ -51,14 +58,25 @@ export function copySync(src: string, dest: string, options: CopyOptions = {}): 
   const destDir = dirname(destFinal);
   mkdirsSync(destDir);
 
-  // For simplicity, this implementation only copies files.
-  // A full fs-extra copySync would handle directories recursively.
   if (srcStat.isDirectory()) {
-    // In a real scenario, we'd recursively copy directory contents here.
-    // For now, we'll just create the directory if it's the target.
-    // If src is a dir and destFinal is a file path, this is an invalid operation or needs different handling.
-    mkdirsSync(destFinal); // Create the target directory if src is a directory.
+    // If overwrite is true and destination exists, remove it first
+    if (overwrite && destExists) {
+      rmSync(destFinal, { recursive: true, force: true });
+    }
+
+    // Recursively copy directory contents
+    mkdirsSync(destFinal);
+    const entries = readdirSync(src);
+    for (const entry of entries) {
+      const srcEntry = joinPath(src, entry);
+      const destEntry = joinPath(destFinal, entry);
+      copySync(srcEntry, destEntry, options);
+    }
   } else {
+    if (overwrite && destExists) {
+      // For files, we can just overwrite them directly with copyFileSync
+      rmSync(destFinal, { force: true });
+    }
     copyFileSync(src, destFinal, preserveTimestamps ? fsConstants.COPYFILE_FICLONE : 0);
     if (preserveTimestamps) {
       // const { atime, mtime } = srcStat;
@@ -96,7 +114,8 @@ export async function copy(src: string, dest: string, options: CopyOptions = {})
     throw e;
   });
 
-  if (destStat?.isDirectory()) {
+  // Only append basename for files being copied into directories
+  if (!srcStat?.isDirectory() && destStat?.isDirectory()) {
     destFinal = joinPath(dest, basenamePath(src));
   }
 
@@ -114,10 +133,24 @@ export async function copy(src: string, dest: string, options: CopyOptions = {})
   await mkdirs(destDir);
 
   if (srcStat?.isDirectory()) {
-    // In a real scenario, we'd recursively copy directory contents here.
-    // For now, we'll just create the directory if it's the target.
-    await mkdirs(destFinal); // Create the target directory if src is a directory.
+    // If overwrite is true and destination exists, remove it first
+    if (overwrite && destExists) {
+      await rm(destFinal, { recursive: true, force: true });
+    }
+
+    // Recursively copy directory contents
+    await mkdirs(destFinal);
+    const entries = await readdir(src);
+    for (const entry of entries) {
+      const srcEntry = joinPath(src, entry);
+      const destEntry = joinPath(destFinal, entry);
+      await copy(srcEntry, destEntry, options);
+    }
   } else {
+    if (overwrite && destExists) {
+      // For files, we can just overwrite them directly with copyFileAsync
+      await rm(destFinal, { force: true });
+    }
     await copyFileAsync(src, destFinal, preserveTimestamps ? fsConstantsAsync.COPYFILE_FICLONE : 0);
     if (preserveTimestamps) {
       // const { atime, mtime } = srcStat;

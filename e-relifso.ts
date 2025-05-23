@@ -1,8 +1,6 @@
-// example/e-mod.ts
 // This script demonstrates the various features of the 'relifso' library.
 // It showcases happy-path scenarios for file and directory manipulations,
 // including async and sync operations, JSON handling, and directory traversal.
-// For brevity, most individual errors are caught by a global handler at the end.
 
 // 👉 `bun dev`
 

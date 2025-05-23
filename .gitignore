@@ -1,9 +1,9 @@
+/__*
 *.log
 .env
 .DS_Store
 .eslintcache
 node_modules
-tests-runtime
-dist-jsr
-dist-libs
-dist-npm
+e-dist
+e-src
+dist*
