@@ -12,7 +12,7 @@ export default defineConfig({
   projectAuthor: "reliverse",
   projectDescription:
     "@reliverse/relifso is a modern filesystem toolkit for builders. drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with es modules, and packed with dx-focused utilities.",
-  version: "1.3.0",
+  version: "1.3.1",
   projectLicense: "MIT",
   projectState: "creating",
   projectRepository: "https://github.com/relifso",

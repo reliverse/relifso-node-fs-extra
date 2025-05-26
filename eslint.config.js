@@ -9,7 +9,7 @@ import tseslint from "typescript-eslint";
 /** @type {import("typescript-eslint").Config} */
 const config = tseslint.config(
   {
-    ignores: ["**/{node_modules,dist*}/", "src/**/*.d.ts", ".tests/"],
+    ignores: ["**/{node_modules,dist*}/", "src/**/*.d.ts", ".tests/", "deprecated/"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

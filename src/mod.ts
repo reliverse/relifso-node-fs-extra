@@ -82,21 +82,28 @@ import {
 } from "node:fs/promises";
 import { join as pathJoin, resolve } from "node:path";
 
-import type { DiveOptions } from "./impl/dive.js";
+import type { DiveOptions } from "./impl/node/dive.js";
 
-import { copy, copySync } from "./impl/copy.js";
-import { createFile, createFileSync } from "./impl/create-file.js";
-import { diveSync } from "./impl/dive.js";
-import { emptyDir, emptyDirSync } from "./impl/empty-dir.js";
-import { mkdirs, mkdirsSync } from "./impl/mkdirs.js";
-import { move, moveSync } from "./impl/move.js";
-import { outputFile, outputFileSync } from "./impl/output-file.js";
-import { outputJson, outputJsonSync } from "./impl/output-json.js";
-import { pathExists, pathExistsSync } from "./impl/path-exists.js";
-import { readFile, readFileSync } from "./impl/read-file.js";
-import { readJson, readJsonSync, type ReadJsonOptions as _ReadJsonOptions } from "./impl/read-json.js";
-import { remove, removeSync } from "./impl/remove.js";
-import { writeJson, writeJsonSync } from "./impl/write-json.js";
+import { copy, copySync } from "./impl/node/copy.js";
+import { createFile, createFileSync } from "./impl/node/create-file.js";
+import { diveSync } from "./impl/node/dive.js";
+import { emptyDir, emptyDirSync } from "./impl/node/empty-dir.js";
+import { mkdirs, mkdirsSync } from "./impl/node/mkdirs.js";
+import { move, moveSync } from "./impl/node/move.js";
+import { outputFile, outputFileSync } from "./impl/node/output-file.js";
+import { outputJson, outputJsonSync } from "./impl/node/output-json.js";
+import { pathExists, pathExistsSync } from "./impl/node/path-exists.js";
+import { readFile, readFileSync } from "./impl/node/read-file.js";
+import { readJson, readJsonSync, type ReadJsonOptions as _ReadJsonOptions } from "./impl/node/read-json.js";
+import { remove, removeSync } from "./impl/node/remove.js";
+import { writeJson, writeJsonSync } from "./impl/node/write-json.js";
+import {
+  execAsync,
+  setHiddenAttributeOnWindows,
+  isHidden,
+  isDirectoryEmpty,
+  rmEnsureDir,
+} from "./impl/utils/additional.js";
 
 // Helper async generator
 async function* _diveWorker(
@@ -320,12 +327,12 @@ function isSymlinkSync(filePath: string): boolean {
   }
 }
 
-export type { CopyOptions } from "./impl/copy.js";
-export type { MoveOptions } from "./impl/move.js";
-export type { ReadFileOptions } from "./impl/read-file.js";
-export type { ReadJsonOptions } from "./impl/read-json.js";
-export type { JsonStringifyOptions } from "./impl/write-json.js";
-export type { WriteJsonOptions } from "./impl/write-json.js";
+export type { CopyOptions } from "./impl/node/copy.js";
+export type { MoveOptions } from "./impl/node/move.js";
+export type { ReadFileOptions } from "./impl/node/read-file.js";
+export type { ReadJsonOptions } from "./impl/node/read-json.js";
+export type { JsonStringifyOptions } from "./impl/node/write-json.js";
+export type { WriteJsonOptions } from "./impl/node/write-json.js";
 
 // Named exports
 export {
@@ -467,6 +474,12 @@ export {
   isSymlink,
   readLines,
   readText,
+  // Additional utility functions
+  execAsync,
+  setHiddenAttributeOnWindows,
+  isHidden,
+  isDirectoryEmpty,
+  rmEnsureDir,
 };
 
 // default export - ensure this mirrors the named exports
@@ -609,6 +622,12 @@ const fs = {
   isSymlink,
   readLines,
   readText,
+  // Additional utility functions
+  execAsync,
+  setHiddenAttributeOnWindows,
+  isHidden,
+  isDirectoryEmpty,
+  rmEnsureDir,
 };
 
 export default fs;

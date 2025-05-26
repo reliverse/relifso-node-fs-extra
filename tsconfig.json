@@ -2,7 +2,7 @@
   "compilerOptions": {
     "paths": {
       "~/*": ["./src/*"],
-      "@/*": ["./src-deprecated/*"]
+      "@/*": ["deprecated/*"]
     },
 
     "baseUrl": ".",
@@ -32,5 +32,5 @@
   },
 
   "include": [".*/**/*.ts", "**/*.ts", "**/*.js"],
-  "exclude": ["node_modules", "dist*", ".tests"]
+  "exclude": ["node_modules", "dist*", "deprecated"]
 }

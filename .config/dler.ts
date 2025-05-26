@@ -20,10 +20,7 @@ export default defineConfig({
   coreDeclarations: true,
   coreEntryFile: "mod.ts",
   coreEntrySrcDir: "src",
-  coreIsCLI: {
-    enabled: false,
-    scripts: {},
-  },
+  coreIsCLI: { enabled: false, scripts: {} },
 
   // JSR-only config
   distJsrAllowDirty: true,
@@ -51,12 +48,17 @@ export default defineConfig({
   libsList: {},
 
   // Logger setup
-  logsFileName: "logs/relinka.log",
+  logsFileName: ".logs/relinka.log",
   logsFreshFile: true,
 
   // Dependency filtering
-  rmDepsMode: "patterns-and-devdeps",
-  rmDepsPatterns: ["@types", "biome", "eslint", "knip", "fs-extra", "jsonfile"],
+  // Global is always applied
+  removeDepsPatterns: {
+    global: ["@types", "biome", "eslint", "knip", "prettier", "typescript", "@reliverse/dler"],
+    "dist-npm": ["bun"],
+    "dist-jsr": [],
+    "dist-libs": {},
+  },
 
   // Build setup
   transpileEsbuild: "es2023",

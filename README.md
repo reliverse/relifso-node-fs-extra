@@ -1,8 +1,8 @@
 # Relifso • Node.js Filesystem Toolkit Library
 
-> @reliverse/relifso is a modern filesystem toolkit for builders. drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with es modules, and packed with dx-focused utilities.
-
 [sponsor](https://github.com/sponsors/blefnk) — [discord](https://discord.gg/Pb8uKbwpsJ) — [npm](https://npmjs.com/package/@reliverse/relifso) — [github](https://github.com/reliverse/relifso)
+
+> @reliverse/relifso is a modern filesystem toolkit for builders. drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with es modules, and packed with dx-focused utilities.
 
 ## Features
 
@@ -12,7 +12,7 @@
 - 🧯 Gracefully handles errors like `EMFILE` (reading or writing a lot of files at once) and other edge cases
 - 📚 Consistent error-first behavior — even for legacy APIs like `fs.exists()`
 - 📦 First-class ESM and full TypeScript support — no config hacks required
-- 🧼 Zero bloat — small size ([3.9 kB](https://bundlephobia.com/package/@reliverse/relifso@latest)), zero deps, modern code, no monkey-patching
+- 🧼 Zero bloat — small size ([4 kB](https://bundlephobia.com/package/@reliverse/relifso@latest)), zero deps, modern code, no monkey-patching
 - 🎯 Supports all Node.js v16+ features — optimized for Node.js v22+
 - 🧪 **Soon**: Ready for upcoming Node.js v22+ experimental features
 - ✌️ **Soon**: Bun v1.2+ ready — ships with Bun-aware enhancements out of the box
