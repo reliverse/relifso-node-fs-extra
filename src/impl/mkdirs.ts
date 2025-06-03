@@ -7,12 +7,20 @@ interface MakeDirectoryOptions {
 }
 
 export function mkdirsSync(dir: string, options?: MakeDirectoryOptions) {
-  if (existsSync(dir)) {
-    return;
+  try {
+    if (existsSync(dir)) {
+      return;
+    }
+    // mkdirsSync is inherently recursive, so we always pass recursive: true.
+    // We pass the mode if provided in options.
+    return mkdirSync(dir, { recursive: true, mode: options?.mode });
+  } catch (error: any) {
+    if (error.code === "EEXIST") {
+      // Directory was created by another process between our check and mkdir
+      return;
+    }
+    throw error;
   }
-  // mkdirsSync is inherently recursive, so we always pass recursive: true.
-  // We pass the mode if provided in options.
-  return mkdirSync(dir, { recursive: true, mode: options?.mode });
 }
 
 export async function mkdirs(dir: string, options?: MakeDirectoryOptions): Promise<string | undefined> {

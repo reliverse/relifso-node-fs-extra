@@ -1,5 +1,3 @@
-import type { Stats, Dirent } from "node:fs";
-
 import {
   // Aliases
   renameSync as nodeRenameSync,
@@ -49,8 +47,6 @@ import {
 } from "node:fs";
 import {
   // Aliases
-  readdir as nodeReaddirInternal,
-  stat as nodeStatInternal,
   rename as nodeRename,
   unlink as nodeUnlink,
   // Direct imports from node:fs/promises
@@ -80,148 +76,62 @@ import {
   watch,
   writeFile,
 } from "node:fs/promises";
-import { join as pathJoin, resolve } from "node:path";
+import { resolve } from "node:path";
 
-import type { DiveOptions } from "./impl/node/dive.js";
-
-import { copy, copySync } from "./impl/node/copy.js";
-import { createFile, createFileSync } from "./impl/node/create-file.js";
-import { diveSync } from "./impl/node/dive.js";
-import { emptyDir, emptyDirSync } from "./impl/node/empty-dir.js";
-import { mkdirs, mkdirsSync } from "./impl/node/mkdirs.js";
-import { move, moveSync } from "./impl/node/move.js";
-import { outputFile, outputFileSync } from "./impl/node/output-file.js";
-import { outputJson, outputJsonSync } from "./impl/node/output-json.js";
-import { pathExists, pathExistsSync } from "./impl/node/path-exists.js";
-import { readFile, readFileSync } from "./impl/node/read-file.js";
-import { readJson, readJsonSync, type ReadJsonOptions as _ReadJsonOptions } from "./impl/node/read-json.js";
-import { remove, removeSync } from "./impl/node/remove.js";
-import { writeJson, writeJsonSync } from "./impl/node/write-json.js";
+import { getFileBun, getFileTypeBun, isBun } from "./impl/bun";
+import { copy, copySync } from "./impl/copy";
 import {
+  createFile,
+  createFileSync,
+  createDir,
+  createDirs,
+  createFiles,
+  createDirSync,
+  createDirsSync,
+  createFilesSync,
+} from "./impl/create";
+import { dive, diveSync } from "./impl/dive";
+import { emptyDir, emptyDirSync, emptyObject, emptyFile, emptyFileSync } from "./impl/empty";
+import {
+  readText,
+  readTextSync,
+  readLines,
+  readLinesSync,
+  isDirectory,
+  isDirectorySync,
+  isSymlink,
+  isSymlinkSync,
   execAsync,
-  setHiddenAttributeOnWindows,
-  isHidden,
   isDirectoryEmpty,
+  isHiddenAttribute,
   rmEnsureDir,
-} from "./impl/utils/additional.js";
-
-// Helper async generator
-async function* _diveWorker(
-  currentPath: string,
-  options: DiveOptions,
-  currentDepth: number,
-): AsyncGenerator<{ file: string; stat: Stats }> {
-  const maxDepth = options.depth ?? Number.POSITIVE_INFINITY;
-  if (currentDepth > maxDepth) {
-    return;
-  }
-
-  let entries: Dirent[];
-  try {
-    entries = await nodeReaddirInternal(currentPath, { withFileTypes: true });
-  } catch (_err) {
-    // TODO: How to handle permission errors etc.? For now, maybe we can rethrow or log.
-    // fs-extra's dive seems to swallow errors on readdir and continue, which might be desirable.
-    // For now, it propagate, or user can wrap dive() in try-catch.
-    // console.error(`Error reading directory ${currentPath}:`, err);
-    return; // Silently stop processing this path on error for now
-  }
-
-  for (const entry of entries) {
-    const entryPath = pathJoin(currentPath, entry.name);
-
-    if (!(options.all ?? false) && entry.name.startsWith(".")) {
-      continue;
-    }
-
-    if (options.ignore) {
-      if (Array.isArray(options.ignore) && options.ignore.some((pattern) => entry.name.includes(pattern))) {
-        continue;
-      }
-      if (options.ignore instanceof RegExp && options.ignore.test(entryPath)) {
-        continue;
-      }
-    }
-
-    let entryStat: Stats;
-    try {
-      entryStat = await nodeStatInternal(entryPath);
-    } catch (_err) {
-      // Failed to stat (e.g. broken symlink, permissions), skip this entry
-      // console.error(`Error stating file ${entryPath}:`, err);
-      continue; // Silently stop processing this path on error for now
-    }
-
-    if (entry.isDirectory()) {
-      if (options.directories ?? false) {
-        yield { file: entryPath, stat: entryStat };
-      }
-      if (options.recursive ?? true) {
-        if (currentDepth < maxDepth) {
-          // Ensure not to exceed depth
-          yield* _diveWorker(entryPath, options, currentDepth + 1);
-        }
-      }
-    } else if (entry.isFile()) {
-      if (options.files ?? true) {
-        yield { file: entryPath, stat: entryStat };
-      }
-    }
-    // Not explicitly handling symlinks, block devices, etc., beyond what isFile/isDirectory covers.
-    // User can inspect stat object if more detail is needed.
-  }
-}
-
-/**
- * Recursively dives into a directory and yields files and directories.
- * @param directory - The directory to dive into.
- * @param action - An optional callback function to execute for each file or directory.
- * @param options - An optional object containing options for the dive.
- * @returns A Promise that resolves to an array of file paths if no action is provided, or void if an action is provided.
- */
-export async function dive(
-  directory: string,
-  action: (file: string, stat: Stats) => void | Promise<void>,
-  options?: DiveOptions,
-): Promise<void>;
-export async function dive(directory: string, options?: DiveOptions): Promise<string[]>;
-export async function dive(
-  directory: string,
-  actionOrOptions?: ((file: string, stat: Stats) => void | Promise<void>) | DiveOptions,
-  optionsOnly?: DiveOptions,
-): Promise<void | string[]> {
-  let action: ((file: string, stat: Stats) => void | Promise<void>) | undefined;
-  let options: DiveOptions | undefined;
-
-  if (typeof actionOrOptions === "function") {
-    action = actionOrOptions;
-    options = optionsOnly;
-  } else {
-    options = actionOrOptions;
-  }
-
-  const currentOptions: DiveOptions = {
-    recursive: true,
-    files: true,
-    directories: false,
-    all: false,
-    depth: Number.POSITIVE_INFINITY,
-    ...options, // User options override defaults
-  };
-
-  if (action) {
-    for await (const { file, stat: entryStat } of _diveWorker(directory, currentOptions, 0)) {
-      await action(file, entryStat);
-    }
-    return;
-  } else {
-    const results: string[] = [];
-    for await (const { file } of _diveWorker(directory, currentOptions, 0)) {
-      results.push(file);
-    }
-    return results;
-  }
-}
+  setHiddenAttribute,
+} from "./impl/extras";
+import { validateAndRepairJson } from "./impl/json-utils";
+import { mkdirs, mkdirsSync } from "./impl/mkdirs";
+import { move, moveSync } from "./impl/move";
+import { outputFile, outputFileSync } from "./impl/output-file";
+import { outputJson, outputJsonSync } from "./impl/output-json";
+import { pathExists, pathExistsSync } from "./impl/path-exists";
+import { readFile, readFileSync } from "./impl/read-file";
+import { readJson, readJsonSync, type ReadJsonOptions as _ReadJsonOptions } from "./impl/read-json";
+import { remove, removeSync } from "./impl/remove";
+import { getFileExists, getFileLastModified, getFileSize, getStats, getStatsSync, toNodeStats } from "./impl/stats";
+import { writeJson, writeJsonSync } from "./impl/write-json";
+import { JSONRepairError } from "./utils/json/helpers/JSONRepairError";
+import { JsonSchemaError } from "./utils/json/helpers/JsonSchemaError";
+import { extractComments } from "./utils/json/regular/jsonc";
+import { jsonrepair } from "./utils/json/regular/jsonrepair";
+import { validateJson } from "./utils/json/regular/validate";
+import { createInputBuffer } from "./utils/json/stream/buffer/InputBuffer";
+import { createOutputBuffer } from "./utils/json/stream/buffer/OutputBuffer";
+import { jsonrepairCore } from "./utils/json/stream/core";
+import { createJsonlParser } from "./utils/json/stream/jsonl";
+import { createJsonlWriter } from "./utils/json/stream/jsonl";
+import { JsonStreamError } from "./utils/json/stream/JsonStreamError";
+import { createJsonStreamParser } from "./utils/json/stream/parser";
+import { jsonrepairTransform } from "./utils/json/stream/stream";
+import { createJsonStreamWriter } from "./utils/json/stream/writer";
 
 // alias
 const mkdirp = mkdirs;
@@ -250,89 +160,24 @@ const cp = copy;
 const cpSync = copySync;
 const exists = pathExists;
 const existsSync = pathExistsSync;
+const jsonRepairRegular = jsonrepair;
 
-// Simple implementations
-async function readText(
-  filePath: string,
-  options: BufferEncoding | { encoding?: BufferEncoding | null; flag?: string } = "utf8",
-) {
-  return readFile(filePath, options as any);
-}
-function readTextSync(
-  filePath: string,
-  options: BufferEncoding | { encoding?: BufferEncoding | null; flag?: string } = "utf8",
-) {
-  return readFileSync(filePath, options as any);
-}
-async function readLines(
-  filePath: string,
-  options: BufferEncoding | { encoding?: BufferEncoding | null; flag?: string } = { encoding: "utf8" },
-) {
-  const effectiveOptions = typeof options === "string" ? { encoding: options } : options;
-  const contentBuffer = await readFile(filePath, { ...effectiveOptions, encoding: null });
-  return contentBuffer.split(/\r?\n/);
-}
-function readLinesSync(
-  filePath: string,
-  options: BufferEncoding | { encoding?: BufferEncoding | null; flag?: string } = { encoding: "utf8" },
-) {
-  const effectiveOptions = typeof options === "string" ? { encoding: options } : options;
-  const contentBuffer = readFileSync(filePath, { ...effectiveOptions, encoding: null });
-  const content = contentBuffer;
-  return content.split(/\r?\n/);
-}
-async function isDirectory(filePath: string): Promise<boolean> {
-  try {
-    const stats = await stat(filePath); // Uses our stat, which uses node:fs/promises
-    return stats.isDirectory();
-  } catch (error: any) {
-    if (error.code === "ENOENT" || error.code === "ENOTDIR") {
-      return false;
-    }
-    throw error;
-  }
-}
-function isDirectorySync(filePath: string): boolean {
-  try {
-    const stats = statSync(filePath); // Uses our statSync, which uses node:fs
-    return stats.isDirectory();
-  } catch (error: any) {
-    if (error.code === "ENOENT" || error.code === "ENOTDIR") {
-      return false;
-    }
-    throw error;
-  }
-}
-async function isSymlink(filePath: string): Promise<boolean> {
-  try {
-    const stats = await lstat(filePath); // uses node:fs/promises lstat
-    return stats.isSymbolicLink();
-  } catch (error: any) {
-    if (error.code === "ENOENT") {
-      return false;
-    }
-    throw error;
-  }
-}
-
-function isSymlinkSync(filePath: string): boolean {
-  try {
-    const stats = lstatSync(filePath); // uses node:fs lstatSync
-    return stats.isSymbolicLink();
-  } catch (error: any) {
-    if (error.code === "ENOENT") {
-      return false;
-    }
-    throw error;
-  }
-}
-
-export type { CopyOptions } from "./impl/node/copy.js";
-export type { MoveOptions } from "./impl/node/move.js";
-export type { ReadFileOptions } from "./impl/node/read-file.js";
-export type { ReadJsonOptions } from "./impl/node/read-json.js";
-export type { JsonStringifyOptions } from "./impl/node/write-json.js";
-export type { WriteJsonOptions } from "./impl/node/write-json.js";
+export type { CopyOptions } from "./impl/copy";
+export type { MoveOptions } from "./impl/move";
+export type { ReadFileOptions } from "./impl/read-file";
+export type { ReadJsonOptions } from "./impl/read-json";
+export type { JsonStringifyOptions } from "./impl/write-json";
+export type { WriteJsonOptions } from "./impl/write-json";
+export type { WriteFileOptions } from "./impl/write-file";
+export type { DiveOptions } from "./impl/dive";
+export type { JsonRepairTransformOptions } from "./utils/json/stream/stream";
+export type { OutputJsonOptions } from "./impl/output-json";
+export type { JSONSchema } from "./utils/json/regular/validate";
+export type { InputBuffer } from "./utils/json/stream/buffer/InputBuffer";
+export type { OutputBuffer, OutputBufferOptions } from "./utils/json/stream/buffer/OutputBuffer";
+export type { JsonRepairCoreOptions, JsonRepairCore } from "./utils/json/stream/core";
+export type { Text } from "./utils/json/helpers/stringUtils";
+export type { JsoncParseOptions, JsoncStringifyOptions } from "./utils/json/regular/jsonc";
 
 // Named exports
 export {
@@ -383,6 +228,10 @@ export {
   readJsonSync,
   writeJsonSync,
   createFileSync,
+  createDirSync,
+  createDirsSync,
+  createFilesSync,
+  emptyFileSync,
   mkdirsSync,
   emptyDirSync,
   pathExistsSync,
@@ -416,6 +265,10 @@ export {
   readJson,
   writeJson,
   createFile,
+  createDir,
+  createDirs,
+  createFiles,
+  emptyFile,
   mkdirs,
   emptyDir,
   pathExists,
@@ -476,10 +329,39 @@ export {
   readText,
   // Additional utility functions
   execAsync,
-  setHiddenAttributeOnWindows,
-  isHidden,
+  setHiddenAttribute,
+  isHiddenAttribute,
   isDirectoryEmpty,
   rmEnsureDir,
+  dive,
+  getFileExists,
+  getFileLastModified,
+  getFileSize,
+  getStats,
+  getStatsSync,
+  emptyObject,
+  // Bun-specific utilities
+  getFileBun,
+  getFileTypeBun,
+  toNodeStats,
+  isBun,
+  // JSON utilities
+  jsonrepair,
+  jsonRepairRegular,
+  createInputBuffer,
+  createOutputBuffer,
+  jsonrepairCore,
+  JSONRepairError,
+  jsonrepairTransform,
+  validateAndRepairJson,
+  validateJson,
+  JsonSchemaError,
+  createJsonStreamParser,
+  createJsonStreamWriter,
+  JsonStreamError,
+  createJsonlParser,
+  createJsonlWriter,
+  extractComments,
 };
 
 // default export - ensure this mirrors the named exports
@@ -531,6 +413,10 @@ const fs = {
   readJsonSync,
   writeJsonSync,
   createFileSync,
+  createDirSync,
+  createDirsSync,
+  createFilesSync,
+  emptyFileSync,
   mkdirsSync,
   emptyDirSync,
   pathExistsSync,
@@ -564,6 +450,10 @@ const fs = {
   readJson,
   writeJson,
   createFile,
+  createDir,
+  createDirs,
+  createFiles,
+  emptyFile,
   mkdirs,
   emptyDir,
   pathExists,
@@ -624,10 +514,39 @@ const fs = {
   readText,
   // Additional utility functions
   execAsync,
-  setHiddenAttributeOnWindows,
-  isHidden,
+  setHiddenAttribute,
+  isHiddenAttribute,
   isDirectoryEmpty,
   rmEnsureDir,
+  dive,
+  getFileExists,
+  getFileLastModified,
+  getFileSize,
+  getStats,
+  getStatsSync,
+  emptyObject,
+  // Bun-specific utilities
+  getFileBun,
+  getFileTypeBun,
+  toNodeStats,
+  isBun,
+  // JSON utilities
+  jsonrepair,
+  jsonRepairRegular,
+  createInputBuffer,
+  createOutputBuffer,
+  jsonrepairCore,
+  JSONRepairError,
+  jsonrepairTransform,
+  validateAndRepairJson,
+  validateJson,
+  JsonSchemaError,
+  createJsonStreamParser,
+  createJsonStreamWriter,
+  JsonStreamError,
+  createJsonlParser,
+  createJsonlWriter,
+  extractComments,
 };
 
 export default fs;

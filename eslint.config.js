@@ -38,7 +38,6 @@ const config = tseslint.config(
       "@typescript-eslint/unbound-method": "off",
       "@typescript-eslint/restrict-plus-operands": "off",
       "@typescript-eslint/no-invalid-void-type": "off",
-      "@typescript-eslint/require-await": "off",
       "@typescript-eslint/no-dynamic-delete": "off",
       "@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
       "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",

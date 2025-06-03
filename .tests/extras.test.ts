@@ -1,9 +1,6 @@
-import path from "@reliverse/pathkit";
-import { ensuredir } from "@reliverse/relifso";
-import fs from "@reliverse/relifso";
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
-
-import { setHiddenAttributeOnWindows, isHidden } from "../src/impl/utils/additional.js";
+import path from "node:path";
+import fs from "~/mod";
 
 let TEST_DIR = path.join(process.cwd(), "test-hidden-dir");
 
@@ -16,7 +13,7 @@ if (activateHardcodedPathCheck) {
 describe("filesystem helpers", () => {
   beforeEach(async () => {
     if (!activateHardcodedPathCheck) {
-      await ensuredir(TEST_DIR);
+      await fs.ensuredir(TEST_DIR);
     }
   });
 
@@ -28,42 +25,42 @@ describe("filesystem helpers", () => {
 
   if (activateHardcodedPathCheck) {
     test("check and set hidden attribute on hardcoded path", async () => {
-      const initialHiddenStatus = await isHidden(TEST_DIR);
+      const initialHiddenStatus = await fs.isHiddenAttribute(TEST_DIR);
       if (!initialHiddenStatus) {
-        await setHiddenAttributeOnWindows(TEST_DIR);
+        await fs.setHiddenAttribute(TEST_DIR);
       }
       // No assertion needed - this is a utility test
     });
   } else {
-    test("setHiddenAttributeOnWindows sets hidden attribute on Windows", async () => {
-      await setHiddenAttributeOnWindows(TEST_DIR);
+    test("setHiddenAttribute sets hidden attribute on Windows", async () => {
+      await fs.setHiddenAttribute(TEST_DIR);
 
       if (process.platform === "win32") {
-        const isHiddenResult = await isHidden(TEST_DIR);
-        expect(isHiddenResult).toBe(true);
+        const isHiddenAttributeResult = await fs.isHiddenAttribute(TEST_DIR);
+        expect(isHiddenAttributeResult).toBe(true);
       } else {
         // On non-Windows platforms, function should run without error
         expect(true).toBe(true);
       }
     });
 
-    test("isHidden returns correct hidden status", async () => {
+    test("isHiddenAttribute returns correct hidden status", async () => {
       // First check - should not be hidden
-      let hiddenStatus = await isHidden(TEST_DIR);
+      let hiddenStatus = await fs.isHiddenAttribute(TEST_DIR);
       expect(hiddenStatus).toBe(false);
 
       // Set hidden and check again (Windows only)
       if (process.platform === "win32") {
-        await setHiddenAttributeOnWindows(TEST_DIR);
-        hiddenStatus = await isHidden(TEST_DIR);
+        await fs.setHiddenAttribute(TEST_DIR);
+        hiddenStatus = await fs.isHiddenAttribute(TEST_DIR);
         expect(hiddenStatus).toBe(true);
       }
     });
 
     test("handles non-existent paths gracefully", async () => {
       const nonExistentPath = path.join(TEST_DIR, "does-not-exist");
-      await setHiddenAttributeOnWindows(nonExistentPath); // Should not throw
-      const result = await isHidden(nonExistentPath);
+      await fs.setHiddenAttribute(nonExistentPath); // Should not throw
+      const result = await fs.isHiddenAttribute(nonExistentPath);
       expect(result).toBe(false);
     });
   }

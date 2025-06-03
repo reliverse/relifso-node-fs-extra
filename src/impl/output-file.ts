@@ -1,5 +1,7 @@
 import { dirname } from "node:path";
 
+import type { WriteFileOptions } from "./write-file.js";
+
 import { mkdirsSync } from "./mkdirs.js";
 import { mkdirs } from "./mkdirs.js";
 import { writeFileSync } from "./write-file.js";
@@ -12,7 +14,7 @@ import { writeFile } from "./write-file.js";
  * @param data - The data to write.
  * @param options - Options for writing the file (e.g., encoding, mode, flag).
  */
-export function outputFileSync(file: string, data: string | Uint8Array, options?: unknown): void {
+export function outputFileSync(file: string, data: string | Uint8Array, options?: WriteFileOptions): void {
   const dir = dirname(file);
   mkdirsSync(dir);
   writeFileSync(file, data, options);
@@ -25,7 +27,7 @@ export function outputFileSync(file: string, data: string | Uint8Array, options?
  * @param data - The data to write.
  * @param options - Options for writing the file (e.g., encoding, mode, flag).
  */
-export async function outputFile(file: string, data: string | Uint8Array, options?: unknown): Promise<void> {
+export async function outputFile(file: string, data: string | Uint8Array, options?: WriteFileOptions): Promise<void> {
   const dir = dirname(file);
   await mkdirs(dir);
   await writeFile(file, data, options);

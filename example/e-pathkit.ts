@@ -6,12 +6,12 @@ import path, {
   type PathExtFilter,
 } from "@reliverse/pathkit";
 
-import fs from "~/mod.js";
+import fs, { isBun, getFileBun, getFileExists, getFileTypeBun, getFileSize, getFileLastModified } from "~/mod.js";
 
-const ALIAS = "@";
+const ALIAS = "#";
 const E_SRC = "e-src";
 const E_DIST = "e-dist";
-const MODE = "js" as PathExtFilter;
+const MODE = "none" as PathExtFilter;
 const TEST_JS_TO_TS_CONVERSION = false;
 
 // pick ext once per file
@@ -20,7 +20,7 @@ function getExt(): string {
   if (MODE === "ts") return ".ts";
   if (MODE === "none") return "";
   const choices = [".js", ".ts", ""];
-  const ext = choices[Math.floor(Math.random() * choices.length)];
+  const ext = choices[Math.floor(Math.random() * choices.length)]!;
   console.log(`chose extension: ${ext || "(none)"}`);
   return ext;
 }
@@ -123,8 +123,36 @@ async function createSampleFiles() {
   log("✓ created sample files in e-src");
 }
 
-async function main(): Promise<void> {
+// Bun-specific file operations
+async function getFileInfo(filePath: string) {
+  if (isBun) {
+    const file = getFileBun(filePath);
+    const exists = await getFileExists(filePath);
+    const size = await getFileSize(filePath);
+    const type = await getFileTypeBun(filePath);
+    const lastModified = await getFileLastModified(filePath);
+
+    return {
+      exists,
+      size,
+      type,
+      lastModified,
+      file,
+    };
+  }
+  return null;
+}
+
+export async function ePathkit(): Promise<void> {
   log("🚀 starting pathkit example");
+
+  // Check if running in Bun
+  if (isBun) {
+    log("✨ Running in Bun environment - using optimized file operations");
+  } else {
+    log("⚠️ Not running in Bun - using standard Node.js file operations");
+  }
+
   await cleanDirs([E_SRC, E_DIST]);
   await createSampleFiles();
 
@@ -167,12 +195,23 @@ async function main(): Promise<void> {
     });
   }
 
+  // Show file info using Bun's optimized API if available
+  if (isBun) {
+    log("\n📦 File information using Bun's optimized API:");
+    const indexFile = path.join(E_DIST, "index.ts");
+    const fileInfo = await getFileInfo(indexFile);
+    if (fileInfo) {
+      log(`  File: ${indexFile}`);
+      log(`  Size: ${fileInfo.size} bytes`);
+      log(`  Type: ${fileInfo.type}`);
+      log(`  Last Modified: ${fileInfo.lastModified.toLocaleString()}`);
+    }
+  }
+
   log("\n✨ Example complete! Check the results in:");
   log(`  - ${E_SRC}: Source files with alias imports`);
   log(`  - ${E_DIST}: Dist files with relative imports`);
 }
-
-await main();
 
 // ========
 // fs utils
@@ -212,7 +251,8 @@ async function copyDir(src: string, dest: string): Promise<void> {
           return copyDir(srcPath, destPath);
         }
 
-        await fs.copyFile(srcPath, destPath);
+        // Use copyFile with mode 0 (default)
+        await fs.copyFile(srcPath, destPath, 0);
         log(`  copied: ${srcPath} → ${destPath}`);
       }),
     );

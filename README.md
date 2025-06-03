@@ -1,28 +1,24 @@
-# Relifso • Node.js Filesystem Toolkit Library
+# Relifso • Bun & Node.js Filesystem Toolkit Library
 
 [sponsor](https://github.com/sponsors/blefnk) — [discord](https://discord.gg/Pb8uKbwpsJ) — [npm](https://npmjs.com/package/@reliverse/relifso) — [github](https://github.com/reliverse/relifso)
 
-> @reliverse/relifso is a modern filesystem toolkit for builders. drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with es modules, and packed with dx-focused utilities.
+> @reliverse/relifso is a modern node and bun filesystem toolkit. drop-in replacement for `node:fs` and `fs-extra` — powered by native promises, built with es modules, and packed with dx-focused and bun-aware utilities.
 
 ## Features
 
+- 🔥 Both Node.js and Bun-specific filesystem features are exposed via `fs.*`
 - 🪄 Everything you love from `fs-extra` — now simpler, cleaner, and more beginner-friendly
 - ⚙️ Drop-in replacement for `node:fs` — with native `Promise`, `async/await`, and sync variants
-- 🤝 Forget about `try-catch` for common errors like “file not found” — relifso does it under the hood
+- 🤝 Forget about `try-catch` for common errors like "file not found" — relifso does it under the hood
 - 🧯 Gracefully handles errors like `EMFILE` (reading or writing a lot of files at once) and other edge cases
 - 📚 Consistent error-first behavior — even for legacy APIs like `fs.exists()`
 - 📦 First-class ESM and full TypeScript support — no config hacks required
-- 🧼 Zero bloat — small size ([4 kB](https://bundlephobia.com/package/@reliverse/relifso@latest)), zero deps, modern code, no monkey-patching
+- 🧼 Zero bloat — small size, zero deps, modern code, no monkey-patching
 - 🎯 Supports all Node.js v16+ features — optimized for Node.js v22+
-- 🧪 **Soon**: Ready for upcoming Node.js v22+ experimental features
-- ✌️ **Soon**: Bun v1.2+ ready — ships with Bun-aware enhancements out of the box
-- 🔥 **Soon**: Bun-specific features are exposed via `fs.*` when running on Bun
-
-## Heads Up
-
-- **Most of the things** mentioned in this doc **aren’t implemented yet** — they’re part of the vision for ~`v1.3.0`.
-- Got thoughts? Ideas? Send your feedback in [Discord](https://discord.gg/Pb8uKbwpsJ) or use [GitHub Issues](https://github.com/reliverse/relifso/issues).
-- Your feedback means the world and helps shape where this project goes next. Thank you!
+- 🧪 Soon: Ready for upcoming Node.js v22+ experimental features
+- ✌️ Bun v1.2+ ready — ships with Bun-aware enhancements out of the box
+- 🐦‍🔥 Finally! Your `fs.*` usage is now can correctly read/write JSON/JSONC!
+- 🔧 Built-in JSON repair — automatically fixes common JSON formatting issues
 
 ## Install
 
@@ -38,16 +34,71 @@ bun rm fs-extra
 bun rm @types/fs-extra
 # soon:
 # bun add -D @reliverse/dler
-# bun dler relifso node-fs to relifso
-# bun dler relifso fs-extra to relifso
+# bun dler migrate fs-relifso
 ```
 
-**Coming soon**:
+**Pro Tip**: _Use Ctrl+Shift+H to replace `fs-extra` with `@reliverse/relifso` in your project._
 
-```bash
-bun add -D @reliverse/dler
-bun dler relifso init ...
-```
+### Core Features
+
+- **File Operations**
+  - Read/write files with various encodings
+  - Copy/move files and directories
+  - Create/remove files and directories
+  - File existence checks
+  - File stats and metadata access
+
+- **Directory Operations**
+  - Create nested directories
+  - Empty directories
+  - Directory traversal with `dive`
+  - Directory existence checks
+
+- **JSON Operations**
+  - Read/write JSON files with validation
+  - JSON repair and validation utilities
+  - JSON streaming support
+  - JSONC (JSON with Comments) support
+  - Automatic JSON repair for common issues:
+    - Missing quotes around keys
+    - Missing escape characters
+    - Missing commas and closing brackets
+    - Truncated JSON
+    - Single quotes to double quotes conversion
+    - Special quote characters normalization
+    - Special whitespace normalization
+    - Python constants (None, True, False) conversion
+    - Trailing comma removal
+    - Comment stripping
+    - Code block stripping
+    - Array/object ellipsis removal
+    - JSONP notation removal
+    - MongoDB data type conversion
+    - String concatenation
+    - Newline-delimited JSON conversion
+
+- **Bun Optimizations**
+  - Automatic runtime detection
+  - Optimized file operations using Bun APIs
+  - Fast file stats and metadata access
+  - Graceful fallbacks to Node.js APIs
+
+- **Utility Functions**
+  - File type detection
+  - Hidden file attribute handling
+  - Directory emptiness checks
+  - File size and last modified time access
+
+### Error Handling
+
+- Graceful handling of common filesystem errors
+- Consistent error types and messages
+- Automatic error recovery where possible
+- Detailed error information for debugging
+- Runtime detection errors
+- File operation failures
+- All Bun-specific operations include proper error handling
+- Automatic fallback from Bun to Node.js APIs when needed
 
 ## Usage
 
@@ -65,9 +116,9 @@ if (await pathExists("dist/index.ts")) {
 }
 ```
 
-- ✨ Everything’s bundled — modern, async, and type-safe.
+- ✨ Everything's bundled — modern, async, and type-safe.
 - 🧼 No more boilerplate like `promisify(fs.removeSync)` or using `mkdirp`, `ncp`, or `rimraf`.
-- 🌱 No more weird `try/catch` for common errors like “file not found.”  
+- 🌱 No more weird `try/catch` for common errors like "file not found."  
 - ✌️ Just clean, predictable APIs built for 2025 and beyond.
 
 ## Example
@@ -89,6 +140,71 @@ const config = await readJson(path);
 console.log(config); // { hello: 'world' }
 
 await remove(".reliverse");
+```
+
+## Run Example
+
+Install this repository locally and run the example by using `bun dev`:
+
+```bash
+$ bun e-mod.ts
+✓   Running examples with Bun...
+Created directory ./tests-runtime
+[env] writeJson was successfully executed in Bun (for JSON)
+Wrote JSON tests-runtime\config.json
+[env] readJson was successfully executed in Bun
+Read JSON {"hello":"world","ts":"2025-06-02T19:01:53.291Z"}
+[env] copy was successfully executed in Bun
+Moved → Copied (with overwrite) tests-runtime\config.old.json → tests-runtime\config.copy.json
+[env] readFile was successfully executed in Bun
+Wrote & read text file Hello Relifso!
+[env] writeFile was successfully executed in Bun
+[env] writeFile was successfully executed in Bun
+Ensured nested & output files
+[env] writeJson was successfully executed in Bun (for JSON)
+[env] readJson was successfully executed in Bun
+writeJson / readJson round-trip {"foo":"bar"}
+[env] writeJson was successfully executed in Bun (for JSONC)
+Wrote JSONC tests-runtime\config.jsonc
+[env] readJson was successfully executed in Bun
+Read JSONC {
+  "name": "relifso",
+  "version": "1.0.0",
+  "features": [
+    "file operations",
+    "directory operations",
+    "JSONC support"
+  ],
+  "settings": {
+    "debug": true,
+    "verbose": false
+  }
+}
+Emptied directory tests-runtime\empty-me
+[env] writeFileSync was successfully executed in Bun
+[env] writeJsonSync was successfully executed in Bun (for JSON)
+Sync JSON round-trip {"sync":true}
+[env] copySync was successfully executed in Bun
+copySync → moveSync → removeSync chain complete
+Directory structure via dive
+ • tests-runtime\config-sync.json
+ • tests-runtime\config.copy.json
+ • tests-runtime\config.jsonc
+ • tests-runtime\config.old.json
+ • tests-runtime\config2.json
+ • tests-runtime\hello.txt
+ • tests-runtime\nested\deep\file.txt
+ • tests-runtime\output-file.txt
+Directory structure via diveSync
+ • tests-runtime\config-sync.json
+ • tests-runtime\config.copy.json
+ • tests-runtime\config.jsonc
+ • tests-runtime\config.old.json
+ • tests-runtime\config2.json
+ • tests-runtime\hello.txt
+ • tests-runtime\nested\deep\file.txt
+ • tests-runtime\output-file.txt
+Removed directory ./tests-runtime
 ```
 
 ## Sync vs Async vs Legacy
@@ -118,7 +234,7 @@ All async methods return a `Promise` if no callback is passed.
 - Compatible with Node.js 16+, best with 22+
 - Async methods are built from the sync versions — no wrappers, no bloat
 
-## What’s Inside?
+## What's Inside?
 
 - All async methods follow the `Promise` pattern by default.
 - All sync methods are safe and throw errors when needed.
@@ -181,7 +297,7 @@ All async methods return a `Promise` if no callback is passed.
 - [isSymlink](https://uwx-node-modules.github.io/fsxt/functions/isSymlink.html)
 - [~~lchmod~~](https://uwx-node-modules.github.io/fsxt/functions/lchmod.html)
 - [lchown](https://uwx-node-modules.github.io/fsxt/functions/lchown.html)
-- [link](https://uwx-node-modules.github.io/fsxt/functions/link.html)
+- [`link`](https://uwx-node-modules.github.io/fsxt/functions/link.html)
 - [lstat](https://uwx-node-modules.github.io/fsxt/functions/lstat.html)
 - [lutimes](https://uwx-node-modules.github.io/fsxt/functions/lutimes.html)
 - [mapChildren](https://uwx-node-modules.github.io/fsxt/functions/mapChildren.html)
@@ -270,22 +386,136 @@ All async methods return a `Promise` if no callback is passed.
 - [utimesSync](https://uwx-node-modules.github.io/fsxt/functions/utimesSync.html)
 - [writevSync](https://uwx-node-modules.github.io/fsxt/functions/writevSync.html)
 
+## Bun Integration
+
+Relifso provides first-class support for Bun with automatic fallbacks to Node.js APIs. Here's how it works:
+
+### JSON Repair Integration
+
+Relifso includes built-in JSON repair capabilities powered by `jsonrepair`, providing robust handling of malformed JSON files. This integration is particularly useful when dealing with JSON files that may have formatting issues or come from various sources.
+
+#### Repair Features
+
+- **Automatic Repair**: Automatically fixes common JSON formatting issues without requiring manual intervention
+- **Streaming Support**: Handles infinitely large JSON documents through streaming
+- **Error Recovery**: Gracefully handles and repairs various JSON syntax errors
+- **Performance Optimized**: Efficient processing with configurable buffer sizes
+
+#### Usage Example
+
+```ts
+import { readJson, writeJson } from "@reliverse/relifso";
+
+// Reading a malformed JSON file
+const malformedJson = `{
+  name: 'John',  // Missing quotes and using single quotes
+  age: 30,
+  active: True,  // Python-style boolean
+  tags: ['dev', 'js', ...],  // Trailing ellipsis
+  metadata: {
+    lastLogin: ISODate("2024-03-20T10:00:00Z")  // MongoDB date
+  }
+}`;
+
+// The JSON will be automatically repaired when reading
+const data = await readJson("config.json");
+console.log(data);
+// Output: Properly formatted JSON with all issues fixed
+
+// Writing JSON with automatic repair
+await writeJson("output.json", data, { repair: true });
+```
+
+#### Streaming Support
+
+For large JSON files, you can use the streaming API:
+
+```ts
+import { createReadStream, createWriteStream } from "@reliverse/relifso";
+
+const inputStream = createReadStream("./data/broken.json");
+const outputStream = createWriteStream("./data/repaired.json");
+
+// The repair happens automatically during the stream
+await pipeline(inputStream, outputStream);
+```
+
+#### Configuration Options
+
+When using JSON operations, you can configure the repair behavior:
+
+```ts
+import { readJson } from "@reliverse/relifso";
+
+const options = {
+  repair: true,  // Enable automatic repair
+  streaming: {
+    chunkSize: 65536,    // Size of output chunks
+    bufferSize: 65536    // Size of repair buffer
+  }
+};
+
+const data = await readJson("large.json", options);
+```
+
+### Automatic Runtime Detection
+
+```ts
+import { isBun } from "@reliverse/relifso";
+
+if (isBun) {
+  console.log("Running in Bun!");
+} else {
+  console.log("Running in Node.js");
+}
+```
+
+### Optimized File Operations
+
+When running in Bun, relifso automatically uses Bun's optimized file system APIs:
+
+- `Bun.file()` for file operations
+- Native file existence checks
+- Optimized file size and type detection
+- Fast last modified time access
+
+### Graceful Fallbacks
+
+All Bun-specific operations include automatic fallbacks to Node.js APIs:
+
+```ts
+import { getStats } from "@reliverse/relifso";
+
+// In Bun: Uses Bun.file() for faster stats
+// In Node.js: Falls back to fs.stat()
+const stats = await getStats("file.txt");
+```
+
+### Available Bun-Specific Utilities
+
+- `getFile(path)` - Get a Bun file reference
+- `exists(path)` - Check file existence using Bun's API
+- `size(path)` - Get file size using Bun's API
+- `type(path)` - Get file MIME type using Bun's API
+- `lastModified(path)` - Get file last modified time
+- `getStats(path)` - Get file stats with Bun optimization
+- `getStatsSync(path)` - Synchronous version of getStats
+
 ## Contributing
 
 ...
 
 ## TODO
 
-- [x] Create usage example in [./e-relifso.ts](./e-relifso.ts) and [./e-pathkit.ts](./e-pathkit.ts)
-- [ ] Ensure [./e-relifso.ts](./e-relifso.ts) and [./e-pathkit.ts](./e-pathkit.ts) works 100% correctly
+- [x] Create usage example in [./example/e-relifso.ts](./example/e-relifso.ts) and [./example/e-pathkit.ts](./example/e-pathkit.ts)
+- [x] Ensure [./example/e-relifso.ts](./example/e-relifso.ts) and [./example/e-pathkit.ts](./example/e-pathkit.ts) works 100% correctly
 - [ ] Consider using [@reliverse/repath](https://github.com/reliverse/repath) instead of just `node:path`.
 - [ ] Pass all `fs-extra` tests with Bun (+ fix & improve them).
-- [ ] Convert all jsdoc comments to TypeScript types.
-- [ ] Fully improve all `fs-extra` codebase files.
+- [ ] In [docs.reliverse.org](https://docs.reliverse.org) implement feature and performance comparison table with `fs-extra`.
 
 ## Shoutouts
 
-Relifso wouldn’t be so cool without these gems:
+Relifso wouldn't be so cool without these gems:
 
 - [`node:fs`](https://nodejs.org/api/fs.html)+[`node:path`](https://nodejs.org/api/path.html) — origins
 - [`fs-extra`](https://github.com/jprichardson/node-fs-extra) — classic, reliable

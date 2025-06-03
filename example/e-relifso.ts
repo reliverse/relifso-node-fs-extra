@@ -28,24 +28,35 @@ import {
   moveSync,
   removeSync,
   diveSync,
+  pathExists,
+  pathExistsSync,
 } from "~/mod.js";
 
-async function main(): Promise<void> {
+export async function eRelifso(): Promise<void> {
   /* ---------------------------------------------------------------------- */
   /*                               Setup dir                                */
   /* ---------------------------------------------------------------------- */
 
-  const root = "./tests-runtime";
-  await ensureDir(root);
-  logStep("Created directory", root);
+  const testsRuntime = "./tests-runtime";
+
+  try {
+    if (await pathExists(testsRuntime)) {
+      await remove(testsRuntime);
+    }
+  } catch (err) {
+    console.error(`Failed to clean up existing test directory: ${err}`);
+  }
+
+  await ensureDir(testsRuntime);
+  logStep("Created directory", testsRuntime);
 
   /* ---------------------------------------------------------------------- */
   /*                         JSON – async versions                          */
   /* ---------------------------------------------------------------------- */
 
-  const jsonPath = join(root, "config.json");
-  const jsonBackup = join(root, "config.old.json");
-  const jsonCopy = join(root, "config.copy.json");
+  const jsonPath = join(testsRuntime, "config.json");
+  const jsonBackup = join(testsRuntime, "config.old.json");
+  const jsonCopy = join(testsRuntime, "config.copy.json");
 
   const data = { hello: "world", ts: new Date().toISOString() };
   await outputJson(jsonPath, data);
@@ -54,7 +65,7 @@ async function main(): Promise<void> {
   const readData = await readJson<typeof data>(jsonPath);
   logStep("Read JSON", JSON.stringify(readData));
 
-  await move(jsonPath, jsonBackup, { overwrite: true });
+  await move(jsonPath, jsonBackup, { overwrite: true, maxRetries: 3, retryDelay: 100 });
   await copy(jsonBackup, jsonCopy, { clobber: true });
   logStep("Moved → Copied (with overwrite)", `${jsonBackup} → ${jsonCopy}`);
 
@@ -62,7 +73,7 @@ async function main(): Promise<void> {
   /*                            Plain text files                            */
   /* ---------------------------------------------------------------------- */
 
-  const textPath = join(root, "hello.txt");
+  const textPath = join(testsRuntime, "hello.txt");
   await writeFile(textPath, "Hello Relifso!");
   const txt = await readFile(textPath, "utf8");
   logStep("Wrote & read text file", txt.toString());
@@ -71,18 +82,46 @@ async function main(): Promise<void> {
   /*                            Utility calls                             */
   /* ---------------------------------------------------------------------- */
 
-  const nestedFile = join(root, "nested/deep/file.txt");
+  const nestedFile = join(testsRuntime, "nested/deep/file.txt");
   await ensureFile(nestedFile);
   await writeFile(nestedFile, "Deep content");
-  await outputFile(join(root, "output-file.txt"), "OutputFile content");
+  await outputFile(join(testsRuntime, "output-file.txt"), "OutputFile content");
   logStep("Ensured nested & output files");
 
-  const config2 = join(root, "config2.json");
+  const config2 = join(testsRuntime, "config2.json");
   await writeJson(config2, { foo: "bar" });
   const config2Data = await readJson<{ foo: string }>(config2);
   logStep("writeJson / readJson round-trip", JSON.stringify(config2Data));
 
-  const emptyDirPath = join(root, "empty-me");
+  /* ---------------------------------------------------------------------- */
+  /*                            JSONC demonstration                          */
+  /* ---------------------------------------------------------------------- */
+
+  const jsoncPath = join(testsRuntime, "config.jsonc");
+  const jsoncData = {
+    // This is a comment in JSONC
+    name: "relifso",
+    version: "1.0.0",
+    features: [
+      "file operations",
+      "directory operations",
+      // Comments work in arrays too
+      "JSONC support",
+    ],
+    // Trailing commas are allowed in JSONC
+    settings: {
+      debug: true,
+      verbose: false,
+    },
+  };
+
+  await outputJson(jsoncPath, jsoncData, { includeComments: true });
+  logStep("Wrote JSONC", jsoncPath);
+
+  const readJsoncData = await readJson<typeof jsoncData>(jsoncPath, { preserveComments: true });
+  logStep("Read JSONC", JSON.stringify(readJsoncData, null, 2));
+
+  const emptyDirPath = join(testsRuntime, "empty-me");
   await ensureDir(emptyDirPath);
   await writeFile(join(emptyDirPath, "temp.txt"), "temp");
   await emptyDir(emptyDirPath);
@@ -92,27 +131,39 @@ async function main(): Promise<void> {
   /*                         Sync API sanity checks                         */
   /* ---------------------------------------------------------------------- */
 
-  const syncJson = join(root, "config-sync.json");
-  outputJsonSync(syncJson, { sync: true });
-  const syncData = readJsonSync<{ sync: boolean }>(syncJson);
-  logStep("Sync JSON round-trip", JSON.stringify(syncData));
+  const syncJson = join(testsRuntime, "config-sync.json");
+  try {
+    const syncData = readJsonSync<{ sync: boolean }>(syncJson);
+    logStep("Sync JSON round-trip", JSON.stringify(syncData));
+  } catch (err) {
+    console.error(`Failed to handle sync JSON operations: ${err}`);
+  }
 
-  const syncCopy = join(root, "sync-copy.json");
-  copySync(config2, syncCopy, { preserveTimestamps: true });
-  const syncMoved = join(root, "sync-moved.json");
-  moveSync(syncCopy, syncMoved, { overwrite: true });
-  removeSync(syncMoved);
-  logStep("copySync → moveSync → removeSync chain complete");
+  try {
+    if (!pathExistsSync(config2)) {
+      outputJsonSync(config2, { foo: "bar" });
+    }
+
+    const syncCopy = join(testsRuntime, "sync-copy.json");
+    copySync(config2, syncCopy, { preserveTimestamps: true });
+
+    const syncMoved = join(testsRuntime, "sync-moved.json");
+    moveSync(syncCopy, syncMoved, { overwrite: true, maxRetries: 3, retryDelay: 100 });
+    removeSync(syncMoved);
+    logStep("copySync → moveSync → removeSync chain complete");
+  } catch (err) {
+    console.error(`Failed to complete sync operations chain: ${err}`);
+  }
 
   /* ---------------------------------------------------------------------- */
   /*                              Directory walk                            */
   /* ---------------------------------------------------------------------- */
 
   logStep("Directory structure via dive");
-  await dive(root, (file) => console.log(" •", file));
+  await dive(testsRuntime, (file) => console.log(" •", file));
 
   logStep("Directory structure via diveSync");
-  for (const file of diveSync(root)) {
+  for (const file of diveSync(testsRuntime)) {
     console.log(" •", file);
   }
 
@@ -121,14 +172,11 @@ async function main(): Promise<void> {
   /* ---------------------------------------------------------------------- */
 
   try {
-    await remove(root);
-    logStep("Removed directory", root);
+    await remove(testsRuntime);
+    logStep("Removed directory", testsRuntime);
   } catch (err) {
-    // Example of handling a specific operation's error before the global catch.
-    console.error(`\x1b[31m[Cleanup Step] Failed to remove directory ${root}:\x1b[0m`, err);
-    // For this example, we log it here. The main().catch() at the script's end
-    // will handle setting the process.exitCode if an error propagates to it
-    // or if this operation was critical and threw an error that wasn't caught here.
+    console.error(`\x1b[31m[Cleanup Step] Failed to remove directory ${testsRuntime}:\x1b[0m`, err);
+    throw err;
   }
 }
 
@@ -137,8 +185,3 @@ async function main(): Promise<void> {
 /* ------------------------------------------------------------------------ */
 
 const logStep = (msg: string, detail?: string): void => console.log("\x1b[36m%s\x1b[0m", msg, detail ?? "");
-
-main().catch((err) => {
-  console.error("💥 Uncaught:", err);
-  process.exitCode = 1;
-});

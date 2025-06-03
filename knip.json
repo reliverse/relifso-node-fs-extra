@@ -2,6 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "project": ["**/*.{ts,js}"],
   "entry": [
+    "example/**/*.ts",
     "**/*.{config,cfg}.{ts,js}",
     "src/mod.ts",
     "src/**/*-mod.ts",
@@ -11,7 +12,8 @@
     ".tests/**/*.ts",
     "e-relifso.ts",
     "e-pathkit.ts",
-    "deprecated/**/*.ts"
+    "deprecated/**/*.ts",
+    "gen-src-mod.ts"
   ],
   "ignore": [
     ".tests/**/*.ts",

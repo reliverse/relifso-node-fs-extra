@@ -1,0 +1,16 @@
+LICENSES
+
+---
+
+MIT License
+
+Copyright (c) Nazar Kornienko (blefnk), Reliverse
+
+See LICENSE file for full license text.
+
+---
+
+NOTICES
+
+Some parts of this project are based on and significantly adapt:
+- https://github.com/josdejong/jsonrepair/tree/acab2a4 – ISC © Jos de Jong (josdejong)
